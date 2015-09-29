@@ -76,7 +76,8 @@ The set $S$ is defined as a set containing any natural number $n$ where $n = 0$ 
 
 The procedure |list-length| returns the number of elements in a given list. This functionality is available as |length| in the Racket API.
 
-\begin{lstlisting}
+\textbf{list-length} : \textit{Listof(Sym) $\rightarrow$ Int}
+\begin{lstlisting}[aboveskip=0pt]
 (define list-length
   (lambda (l)
     (if (null? l)
@@ -88,7 +89,8 @@ The procedure |list-length| returns the number of elements in a given list. This
 
 The procedure |nth-element| returns the element from a given list at a given position. This functionality is available as |list-ref| in the Racket API.
 
-\begin{lstlisting}
+\textbf{nth-element} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
 (define report-list-too-short
   (lambda (n)
     (eopl:error 'nth-element
@@ -107,7 +109,8 @@ The procedure |nth-element| returns the element from a given list at a given pos
 
 The procedure |remove-first| returns a given list without the first occurrence of a given symbol. If the list is empty, an empty list is returned. If the list does not contain the given symbol, the given list is returned. This functionality is available as |remv| in the Racket API.
 
-\begin{lstlisting}
+\textbf{remove-first} : \textit{Sym $\times$ Listof(Sym) $\rightarrow$ Listof(Sym)}
+\begin{lstlisting}[aboveskip=0pt]
 (define remove-first
   (lambda (s l)
     (if (null? l)
@@ -116,6 +119,40 @@ The procedure |remove-first| returns a given list without the first occurrence o
             (cdr l)
             (cons (car l) (remove-first s (cdr l)))))))
 \end{lstlisting}
+
+\subsection{occurs-free?}
+
+The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and returns |#t| if a given variable is not a bound variable in that expression. This means that it does not occur as a named parameter for any of the |lambda| expressions in the given expression.
+
+\textbf{occurs-free?} : \textit{Sym $\times$ LcExp $\rightarrow$ Bool}
+\begin{lstlisting}[aboveskip=0pt,numbers=left]
+(define occurs-free?
+  (lambda (var expr)
+    (cond
+      ((symbol? expr) (eqv? var expr))
+      ((eqv? (car expr) 'lambda)
+       (and
+        (not (eqv? var (caadr expr)))
+        (occurs-free? var (caddr expr))))
+      (else
+       (or
+        (occurs-free? var (car expr))
+        (occurs-free? var (cadr expr)))))))
+\end{lstlisting}
+
+\subsubsection*{Lines reference}
+
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item If |expr| is a symbol, which is |'| followed by a letter, then the given |var| is not bound if it equals |expr|.
+\item If the first element of |expr| is |'lambda|, it is a lambda expression, which we have to dissect.
+\setcounter{enumi}{6}
+\item |(caadr expr)| returns the parameter of the |lambda| expression, which is referred to as the first (and only) value of the head of the expression. An expression in $\lambda$-calculus can only have a single parameter for each |lambda| expression. In essence, it first performs |cdr| to remove the leading |lambda| from the expression. Then it performs |car| to obtain the head of the expression and finally it will perform another |car| to get the (first) element inside of the head.
+\item |(caddr expr)| returns the body of the expression. This is only called if the previous line did not evaluate to |#f|. That means that the head of the expression did not contain |var| and then we can proceed to evaluate the body with a recursive call to |occurs-free?|.
+\setcounter{enumi}{10}
+\item Aside from the previous cases, $\lambda$-calculus also has expressions that come in pairs of 2. First we will extract the first value of the pair using |car| and evaluate that with a recursive call to |occurs-free?|.
+\item To grab the second value of the pair, we have to first get the list of expressions symbols that does not contain the initial symbol, which we've already evaluated using |cdr| and next get the first (and only) symbol of that list using |car|. This line is only executed, if the previous line did not evaluate to |#t|.
+\end{enumerate}
 
 \newpage
 
@@ -170,6 +207,12 @@ We define |remove| as a procedure which removes every occurrence of a given symb
             (remove s (cdr l))
             (cons (car l) (remove s (cdr l)))))))
 \end{lstlisting}
+
+\subsubsection*{1.10}
+
+Though typically ``or'' refers to ``inclusive or'', ``exclusive or'' also exists. The statement ``A or B'' for the inclusive variant, will evaluate to true (if it is a logical expression) when either A and/or B are true. The exclusive variant, often referred to as ``xor'', will for ``A xor B'' only evaluate to true if A or B are true, but not when both are true or false.
+
+\subparagraph{NOTE} When we refer to bitwise operations, rather than logical ones, ``A or B'' will perform the same logic as it would for a logical expression, at the binary level. E.g. ``1001 or 0101'' evaluates to 1101, which translates to the decimal system as ``9 or 5 = 13''. ``1001 xor 0101'' evaluates to 1100, which translates to the decimal system as ``9 xor 5 = 12''.
 
 \newpage
 
@@ -346,10 +389,10 @@ Evaluates |test-expr| and evaluates |then-expr| if the result was anything but |
 
 \subsubsection{lambda}
 
-\begin{lstlisting}[frame=none,language=SchemeBasic,belowskip=0pt]
+\begin{lstlisting}[frame=none,belowskip=0pt]
 (lambda args body)
 \end{lstlisting}
-\begin{lstlisting}[frame=none,aboveskip=0pt]
+\begin{lstlisting}[frame=none,language=SchemeLambda,aboveskip=0pt]
 (lambda args body)
 \end{lstlisting}
 
