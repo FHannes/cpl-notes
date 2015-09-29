@@ -194,7 +194,6 @@ Returns the first element of a given list |l|.
 a
 \end{lstlisting}
 
-
 \subsubsection{cdr}
 
 \begin{lstlisting}[frame=none]
@@ -210,6 +209,28 @@ Returns the n-1 last elements of a given list |l| as a new list, where n is the 
 \begin{lstlisting}
 > (cdr '(a b (c d) e))
 (b (c d) e)
+\end{lstlisting}
+
+\subsubsection{cons}
+
+\begin{lstlisting}[frame=none]
+(cons a b)
+\end{lstlisting}
+
+\textbf{Description}
+
+Returns a pair containing |a| and |b| if they are both symbols. If |b| is a list, it will return that list with |a| appended at the start.
+
+\textbf{Examples}
+
+\begin{lstlisting}
+> (cons 'a 'b)
+'(a . b)
+\end{lstlisting}
+
+\begin{lstlisting}
+> (cons 'a '(b))
+'(a b)
 \end{lstlisting}
 
 \subsubsection{define}
@@ -392,6 +413,28 @@ Returns |#t| if |l| is an empty list |'()| and |#f| is it is not.
 \begin{lstlisting}
 > (null? '())
 #t
+\end{lstlisting}
+
+\subsubsection{symbol?}
+
+\begin{lstlisting}[frame=none]
+(symbol? s)
+\end{lstlisting}
+
+\textbf{Description}
+
+Returns |#t| if |l| is a symbol and |#f| is it is not.
+
+\textbf{Examples}
+
+\begin{lstlisting}
+> (symbol? 'a)
+#t
+\end{lstlisting}
+
+\begin{lstlisting}
+> (symbol? 1)
+#f
 \end{lstlisting}
 
 \subsubsection{zero?}
