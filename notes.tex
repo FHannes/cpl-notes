@@ -58,6 +58,12 @@
 
 \newpage
 
+\section{Info}
+
+This document contains my notes for the course Comparative Programming Languages. It features code examples from the textbook used in the course, with some or a lot of explanation, depending on the complexity of the examples. I try to implement these myself first, if my implementation differs greatly from that of the textbook, I also add it to this document with an explanation of what I could've done better. After these examples, exercises and a modest Racket language reference guide are also present.
+
+\newpage
+
 \section{Code}
 
 \subsection{in-S?}
@@ -79,30 +85,33 @@ The procedure |list-length| returns the number of elements in a given list. This
 \textbf{list-length} : \textit{Listof(Sym) $\rightarrow$ Int}
 \begin{lstlisting}[aboveskip=0pt]
 (define list-length
-  (lambda (l)
-    (if (null? l)
+  (lambda (lst)
+    (if (null? lst)
         0
-        (+ 1 (list-length (cdr l))))))
+        (+ 1 (list-length (cdr lst))))))
 \end{lstlisting}
 
 \subsection{nth-element}
 
 The procedure |nth-element| returns the element from a given list at a given position. This functionality is available as |list-ref| in the Racket API.
 
-\textbf{nth-element} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ SchemeVal}
+\textbf{report-list-too-short} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ Error}
 \begin{lstlisting}[aboveskip=0pt]
 (define report-list-too-short
   (lambda (n)
     (eopl:error 'nth-element
                 "List too short by ~s elements.~%" (+ n 1))))
+\end{lstlisting}
 
+\textbf{nth-element} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
 (define nth-element
-  (lambda (l p)
-    (if (null? l)
-        (report-list-too-short p)
-        (if (zero? p)
-            (car l)
-            (nth-element (cdr l) (- p 1))))))
+  (lambda (lst n)
+    (if (null? lst)
+        (report-list-too-short n)
+        (if (zero? n)
+            (car lst)
+            (nth-element (cdr lst) (- n 1))))))
 \end{lstlisting}
 
 \subsection{remove-first}
@@ -112,12 +121,12 @@ The procedure |remove-first| returns a given list without the first occurrence o
 \textbf{remove-first} : \textit{Sym $\times$ Listof(Sym) $\rightarrow$ Listof(Sym)}
 \begin{lstlisting}[aboveskip=0pt]
 (define remove-first
-  (lambda (s l)
-    (if (null? l)
+  (lambda (s los)
+    (if (null? los)
         '()
-        (if (eqv? (car l) s)
-            (cdr l)
-            (cons (car l) (remove-first s (cdr l)))))))
+        (if (eqv? (car los) s)
+            (cdr los)
+            (cons (car los) (remove-first s (cdr los)))))))
 \end{lstlisting}
 
 \subsection{occurs-free?}
@@ -127,28 +136,28 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
 \textbf{occurs-free?} : \textit{Sym $\times$ LcExp $\rightarrow$ Bool}
 \begin{lstlisting}[aboveskip=0pt,numbers=left]
 (define occurs-free?
-  (lambda (var expr)
+  (lambda (var exp)
     (cond
-      ((symbol? expr) (eqv? var expr))
-      ((eqv? (car expr) 'lambda)
+      ((symbol? exp) (eqv? var exp))
+      ((eqv? (car exp) 'lambda)
        (and
-        (not (eqv? var (caadr expr)))
-        (occurs-free? var (caddr expr))))
+        (not (eqv? var (caadr exp)))
+        (occurs-free? var (caddr exp))))
       (else
        (or
-        (occurs-free? var (car expr))
-        (occurs-free? var (cadr expr)))))))
+        (occurs-free? var (car exp))
+        (occurs-free? var (cadr exp)))))))
 \end{lstlisting}
 
 \subsubsection*{Lines reference}
 
 \begin{enumerate}
 \setcounter{enumi}{3}
-\item If |expr| is a symbol, which is |'| followed by a letter, then the given |var| is not bound if it equals |expr|.
-\item If the first element of |expr| is |'lambda|, it is a lambda expression, which we have to dissect.
+\item If |exp| is a symbol, which is |'| followed by a letter, then the given |var| is not bound if it equals |exp|.
+\item If the first element of |exp| is |'lambda|, it is a lambda expression, which we have to dissect.
 \setcounter{enumi}{6}
-\item |(caadr expr)| returns the parameter of the |lambda| expression, which is referred to as the first (and only) value of the head of the expression. An expression in $\lambda$-calculus can only have a single parameter for each |lambda| expression. In essence, it first performs |cdr| to remove the leading |lambda| from the expression. Then it performs |car| to obtain the head of the expression and finally it will perform another |car| to get the (first) element inside of the head.
-\item |(caddr expr)| returns the body of the expression. This is only called if the previous line did not evaluate to |#f|. That means that the head of the expression did not contain |var| and then we can proceed to evaluate the body with a recursive call to |occurs-free?|.
+\item |(caadr exp)| returns the parameter of the |lambda| expression, which is referred to as the first (and only) value of the head of the expression. An expression in $\lambda$-calculus can only have a single parameter for each |lambda| expression. In essence, it first performs |cdr| to remove the leading |lambda| from the expression. Then it performs |car| to obtain the head of the expression and finally it will perform another |car| to get the (first) element inside of the head.
+\item |(caddr exp)| returns the body of the expression. This is only called if the previous line did not evaluate to |#f|. That means that the head of the expression did not contain |var| and then we can proceed to evaluate the body with a recursive call to |occurs-free?|.
 \setcounter{enumi}{10}
 \item Aside from the previous cases, $\lambda$-calculus also has expressions that come in pairs of 2. First we will extract the first value of the pair using |car| and evaluate that with a recursive call to |occurs-free?|.
 \item To grab the second value of the pair, we have to first get the list of expressions symbols that does not contain the initial symbol, which we've already evaluated using |cdr| and next get the first (and only) symbol of that list using |car|. This line is only executed, if the previous line did not evaluate to |#t|.
@@ -158,17 +167,43 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
 
 The procedure |subst| takes 2 symbols and an s-list, which is defined as a list containing symbols and/or s-lists. The procedure should replace every occurrence of one of the given symbols in the list and all nested lists by the other given symbol, referred to as |old| and |new| respectively.
 
+\subsubsection*{First attempt}
+
 \textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
 \begin{lstlisting}[aboveskip=0pt]
 (define subst
-  (lambda (new old list)
-    (if (null? list)
+  (lambda (new old slist)
+    (if (null? slist)
         '()
-        (if (symbol? (car list))
-            (cons (if (eqv? (car list) old)
+        (if (symbol? (car slist))
+            (cons (if (eqv? (car slist) old)
                       new
-                      (car list))(subst new old (cdr list)))
-            (cons (subst new old (car list)) (subst new old (cdr list)))))))
+                      (car slist)) (subst new old (cdr slist)))
+            (cons (subst new old (car slist)) (subst new old (cdr slist)))))))
+\end{lstlisting}
+
+My first attempt can be improved by extracting the |cons| call from both expressions passed to the second |if| call, as the second expression in each |cons| call is the same.
+
+\subsubsection*{Textbook}
+
+\textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-exp $\rightarrow$ S-exp}
+\begin{lstlisting}[aboveskip=0pt]
+((define subst-in-s-exp
+  (lambda (new old sexp)
+    (if (symbol? sexp)
+        (if (eqv? sexp old) new sexp)
+        (subst new old sexp))))
+\end{lstlisting}
+
+\textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
+\begin{lstlisting}[aboveskip=0pt]
+(define subst
+  (lambda (new old slist)
+    (if (null? slist)
+        '()
+        (cons
+         (subst-in-s-exp new old (car slist))
+         (subst new old (cdr slist))))))
 \end{lstlisting}
 
 \newpage
@@ -187,29 +222,29 @@ We introduce a helper procedure |nth-element-helper| to easily preserve the orig
 
 \begin{lstlisting}
 (define report-list-too-short
-  (lambda (l n)
+  (lambda (lst n)
     (eopl:error 'nth-element
                 "~s does not have ~s element(s).~%" l (+ (length l) (+ n 1)))))
 
 (define nth-element-helper
-  (lambda (ol l p)
-    (if (null? l)
-        (report-list-too-short ol p)
-        (if (zero? p)
-            (car l)
-            (nth-element-helper ol (cdr l) (- p 1))))))
+  (lambda (origlst lst n)
+    (if (null? lst)
+        (report-list-too-short origlst n)
+        (if (zero? n)
+            (car lst)
+            (nth-element-helper origlst (cdr lst) (- n 1))))))
 
 (define nth-element
-  (lambda (l p)
-    (nth-element-helper l l p)))
+  (lambda (lst n)
+    (nth-element-helper lst lst n)))
 \end{lstlisting}
 
 \subsubsection*{1.8}
 
-If the last line of |remove-first| were to be replaced with |(remove-first s (cdr l))|, it would be defined as:
+If the last line of |remove-first| were to be replaced with |(remove-first s (cdr los))|, it would be defined as:
 
 \textbf{remote-first} : \textit{Sym $\times$ Listof(Sym) $\rightarrow$ Listof(Sym)}\\
-\textbf{usage:} |(remove-first s l)| returns a list with all elements starting after the first occurrence of the symbol s in the list l.
+\textbf{usage:} |(remove-first s los)| returns a list with all elements starting after the first occurrence of the symbol |s| in the list |los|.
 
 \subsubsection*{1.9}
 
@@ -230,6 +265,26 @@ We define |remove| as a procedure which removes every occurrence of a given symb
 Though typically ``or'' refers to ``inclusive or'', ``exclusive or'' also exists. The statement ``A or B'' for the inclusive variant, will evaluate to true (if it is a logical expression) when either A and/or B are true. The exclusive variant, often referred to as ``xor'', will for ``A xor B'' only evaluate to true if A or B are true, but not when both are true or false.
 
 \subparagraph{NOTE} When we refer to bitwise operations, rather than logical ones, ``A or B'' will perform the same logic as it would for a logical expression, at the binary level. E.g. ``1001 or 0101'' evaluates to 1101, which translates to the decimal system as ``9 or 5 = 13''. ``1001 xor 0101'' evaluates to 1100, which translates to the decimal system as ``9 xor 5 = 12''.
+
+\subsubsection*{1.11}
+
+The |subst-in-s-exp| procedure is called with the first element of the parameter |slist| in |subst|, it only passes this back to |subst| if it is not a symbol. This means it works down into the tree of nested lists. Once the deepest nested list has been reached, recursion will automatically halt.
+
+\subsubsection*{1.12}
+
+The procedure |subst| defined below has |subst-in-s-exp| inlined.
+
+\begin{lstlisting}
+(define subst
+  (lambda (new old slist)
+    (if (null? slist)
+        '()
+        (cons
+         (if (symbol? (car slist))
+             (if (eqv? (car slist) old) new (car slist))
+             (subst new old (car slist)))
+         (subst new old (cdr slist))))))
+\end{lstlisting}
 
 \newpage
 
