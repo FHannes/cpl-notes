@@ -154,6 +154,23 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
 \item To grab the second value of the pair, we have to first get the list of expressions symbols that does not contain the initial symbol, which we've already evaluated using |cdr| and next get the first (and only) symbol of that list using |car|. This line is only executed, if the previous line did not evaluate to |#t|.
 \end{enumerate}
 
+\subsection{subst}
+
+The procedure |subst| takes 2 symbols and an s-list, which is defined as a list containing symbols and/or s-lists. The procedure should replace every occurrence of one of the given symbols in the list and all nested lists by the other given symbol, referred to as |old| and |new| respectively.
+
+\textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
+\begin{lstlisting}[aboveskip=0pt]
+(define subst
+  (lambda (new old list)
+    (if (null? list)
+        '()
+        (if (symbol? (car list))
+            (cons (if (eqv? (car list) old)
+                      new
+                      (car list))(subst new old (cdr list)))
+            (cons (subst new old (car list)) (subst new old (cdr list)))))))
+\end{lstlisting}
+
 \newpage
 
 \section{Exercises}
