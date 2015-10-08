@@ -286,6 +286,45 @@ The procedure |subst| defined below has |subst-in-s-exp| inlined.
          (subst new old (cdr slist))))))
 \end{lstlisting}
 
+\subsubsection*{1.13}
+
+The procedure |map| is used to process the slist in the altered version of |subst|.
+
+\begin{lstlisting}
+(define subst
+  (lambda (new old slist)
+    (map (lambda (sexp)
+           (if (symbol? sexp)
+               (if (eqv? sexp old) new sexp)
+               (subst new old sexp))) slist)))
+\end{lstlisting}
+
+\subsubsection*{1.15}
+
+The procedure |duple| returns a list with an input value duplicated a certain number of times.
+
+\begin{lstlisting}
+(define duple
+  (lambda (n x)
+    (if (zero? n)
+        '()
+        (cons x (duple (- n 1) x)))))
+\end{lstlisting}
+
+\subsubsection*{1.16}
+
+The procedure |invert| swaps the elements of every pair in a list of pairs.
+
+\begin{lstlisting}
+(define invert
+  (lambda (lst)
+    (if (null? lst)
+        '()
+        (cons
+         (list (cadar lst) (caar lst))
+         (invert (cdr lst))))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
