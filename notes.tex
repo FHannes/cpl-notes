@@ -3,7 +3,7 @@
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{parskip}
 \usepackage[pdftex]{graphicx}
-\usepackage[dutch]{babel}
+\usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{float}
 \usepackage{framed}
@@ -456,6 +456,34 @@ The procedure |list-index| returns the position of the first element of a given 
             (plus-or-false
              (list-index pred (cdr lst))
              1)))))
+\end{lstlisting}
+
+\subsubsection*{1.24}
+
+The procedure |every?| returns |#t| if every element of a given list evaluates to |#t| for a given predicate and |#f| if it does not.
+
+\begin{lstlisting}
+(define every?
+  (lambda (pred lst)
+    (if (null? lst)
+        #t
+        (and
+         (pred (car lst))
+         (every? pred (cdr lst))))))
+\end{lstlisting}
+
+\subsubsection*{1.25}
+
+The procedure |exists?| returns |#t| if at elast one element of a given list evaluates to |#t| for a given predicate and |#f| if none do.
+
+\begin{lstlisting}
+(define exists?
+  (lambda (pred lst)
+    (if (null? lst)
+        #f
+        (or
+         (pred (car lst))
+         (exists? pred (cdr lst))))))
 \end{lstlisting}
 
 \newpage
