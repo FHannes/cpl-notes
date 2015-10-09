@@ -420,6 +420,44 @@ The procedure |product| returns a list of pairs which represent the Cartesian pr
          (product (cdr sos1) sos2)))))
 \end{lstlisting}
 
+\subsubsection*{1.22}
+
+The procedure |filter-in| returns a list containing only the top-level elements of a given list for which a given predicate evaluates to |#t|.
+
+\begin{lstlisting}
+(define filter-in
+  (lambda (pred lst)
+    (if (null? lst)
+        '()
+        (if (pred (car lst))
+            (cons
+             (car lst)
+             (filter-in pred (cdr lst)))
+            (filter-in pred (cdr lst))))))
+\end{lstlisting}
+
+\subsubsection*{1.23}
+
+The procedure |list-index| returns the position of the first element of a given list for which a given predicate returns |#t|. If the predicate is false for every element of the list, the procedure returns |#f|.
+
+\begin{lstlisting}
+(define plus-or-false
+  (lambda (a b)
+    (if (or (eq? a #f) (eq? b #f))
+        #f
+        (+ a b))))
+
+(define list-index
+  (lambda (pred lst)
+    (if (null? lst)
+        #f
+        (if (pred (car lst))
+            0
+            (plus-or-false
+             (list-index pred (cdr lst))
+             1)))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
