@@ -667,6 +667,36 @@ The procedure |double-tree| doubles the value of each leaf in a tree.
           (double-tree (caddr bintree)))))))
 \end{lstlisting}
 
+\subsubsection*{1.33}
+
+The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion a given binary tree with the number of times the symbol |'red| is found in a parent node.
+
+\begin{lstlisting}
+(define mark-leaves-depth
+  (lambda (bintree s depth)
+    (if (leaf? bintree)
+        depth
+        (cons
+         (car bintree)
+         (list
+          (mark-leaves-depth
+           (cadr bintree)
+           s
+           (if (eqv? s (car bintree))
+               (+ 1 depth)
+               depth))
+          (mark-leaves-depth
+           (caddr bintree)
+           s
+           (if (eqv? s (car bintree))
+               (+ 1 depth)
+               depth)))))))
+
+(define mark-leaves-with-red-depth
+  (lambda (bintree)
+    (mark-leaves-depth bintree 'red 0)))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
