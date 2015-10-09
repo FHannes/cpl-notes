@@ -474,7 +474,7 @@ The procedure |every?| returns |#t| if every element of a given list evaluates t
 
 \subsubsection*{1.25}
 
-The procedure |exists?| returns |#t| if at elast one element of a given list evaluates to |#t| for a given predicate and |#f| if none do.
+The procedure |exists?| returns |#t| if at least one element of a given list evaluates to |#t| for a given predicate and |#f| if none do.
 
 \begin{lstlisting}
 (define exists?
@@ -484,6 +484,58 @@ The procedure |exists?| returns |#t| if at elast one element of a given list eva
         (or
          (pred (car lst))
          (exists? pred (cdr lst))))))
+\end{lstlisting}
+
+\subsubsection*{1.26}
+
+The procedure |up| removes the parenthesis for every top-level list in a given list.
+
+\begin{lstlisting}
+(define prepend
+  (lambda (lst1 lst2)
+    (if (null? lst1)
+        lst2
+        (cons
+         (car lst1)
+         (prepend (cdr lst1) lst2)))))
+
+(define up
+  (lambda (lst)
+    (if (null? lst)
+        '()
+        (if (symbol? (car lst))
+            (cons
+             (car lst)
+             (up (cdr lst)))
+            (prepend
+             (car lst)
+             (up (cdr lst)))))))
+\end{lstlisting}
+
+\subsubsection*{1.27}
+
+The procedure |flatten| removes the parenthesis for every list and nested list in a given list.
+
+\begin{lstlisting}
+(define prepend
+  (lambda (lst1 lst2)
+    (if (null? lst1)
+        lst2
+        (cons
+         (car lst1)
+         (prepend (cdr lst1) lst2)))))
+
+(define flatten
+  (lambda (lst)
+    (if (null? lst)
+        '()
+        (if (symbol? (car lst))
+            (cons
+             (car lst)
+             (flatten (cdr lst)))
+            (prepend
+             (flatten (car lst))
+             (flatten (cdr lst)))))))
 \end{lstlisting}
 
 \newpage
