@@ -325,6 +325,37 @@ The procedure |invert| swaps the elements of every pair in a list of pairs.
          (invert (cdr lst))))))
 \end{lstlisting}
 
+\subsubsection*{1.17}
+
+The procedure |down| wraps every top-level element of a given list in a list.
+
+\begin{lstlisting}
+(define down
+  (lambda (lst)
+    (if (null? lst)
+        '()
+        (cons
+         (cons (car lst) '())
+         (down (cdr lst))))))
+\end{lstlisting}
+
+\subsubsection*{1.18}
+
+The procedure |swapper| swaps every given 2 symbols in a given list and its nested lists.
+
+\begin{lstlisting}
+(define swapper
+  (lambda (s1 s2 slist)
+    (map
+     (lambda (elem)
+       (if (symbol? elem)
+           (if (eqv? elem s1)
+               s2
+               (if (eqv? elem s2) s1 elem))
+           (swapper s1 s2 elem)))
+     slist)))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
