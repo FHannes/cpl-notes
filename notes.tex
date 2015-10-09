@@ -615,6 +615,58 @@ The procedure |sort/predicate| takes a list of numbers and sorts them based on a
          (sort/predicate pred (remove-first (select pred loi) loi))))))
 \end{lstlisting}
 
+\subsubsection*{1.31}
+
+The procedure |leaf| creates the representation of a leaf in a binary tree. |interior-node| creates a named node with 2 leafs linked to it. |leaf?| returns |#t| if a given value is a leaf. |lson| returns the left leaf/subnode of a node and |rson| the right one. |contents-of| returns the value of a bintree item, which is the value of a leaf or the name of a node.
+
+\begin{lstlisting}
+(define leaf
+  (lambda (v)
+    v))
+
+(define interior-node
+  (lambda (s bt1 bt2)
+    (list s bt1 bt2)))
+
+(define leaf?
+  (lambda (v)
+   (number? v)))
+
+(define lson
+  (lambda (bintree)
+    (cadr bintree)))
+
+(define rson
+  (lambda (bintree)
+    (caddr bintree)))
+
+(define contents-of
+  (lambda (bintree)
+    (if (leaf? bintree)
+        bintree
+        (car bintree))))
+\end{lstlisting}
+
+\subsubsection*{1.32}
+
+The procedure |double-tree| doubles the value of each leaf in a tree.
+
+\begin{lstlisting}
+(define leaf?
+  (lambda (v)
+   (number? v)))
+
+(define double-tree
+  (lambda (bintree)
+    (if (leaf? bintree)
+        (* 2 bintree)
+        (cons
+         (car bintree)
+         (list
+          (double-tree (cadr bintree))
+          (double-tree (caddr bintree)))))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
