@@ -356,6 +356,38 @@ The procedure |swapper| swaps every given 2 symbols in a given list and its nest
      slist)))
 \end{lstlisting}
 
+\subsubsection*{1.19}
+
+The procedure |list-set| replaces the element at a certain given zero-offset position in a list by a different one.
+
+\begin{lstlisting}
+(define list-set
+  (lambda (lst n x)
+    (if (null? lst)
+        '()
+        (cons
+         (if (zero? n)
+             x
+             (car lst))
+         (list-set (cdr lst) (- n 1) x)))))
+\end{lstlisting}
+
+\subsubsection*{1.20}
+
+The procedure |count-occurrences| counts the amount of times that a given symbol is rpesent in a given list or any nested list in that list.
+
+\begin{lstlisting}
+(define count-occurrences
+  (lambda (s slist)
+    (if (null? slist)
+        0
+        (+
+         (if (symbol? (car slist))
+             (if (eqv? (car slist) s) 1 0)
+             (count-occurrences s (car slist)))
+         (count-occurrences s (cdr slist))))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
