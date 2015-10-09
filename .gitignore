@@ -5,3 +5,8 @@
 *.toc
 *.fls
 *.fdb_latexmk
+
+% BaKoMa TeX Word
+*.tex.Backup-*
+*.ddf
+*.bb
