@@ -388,6 +388,38 @@ The procedure |count-occurrences| counts the amount of times that a given symbol
          (count-occurrences s (cdr slist))))))
 \end{lstlisting}
 
+\subsubsection*{1.21}
+
+The procedure |product| returns a list of pairs which represent the Cartesian product of two given lists.
+
+\begin{lstlisting}
+(define pair
+  (lambda (s lst)
+    (if (null? lst)
+        '()
+        (cons
+         (list
+          s
+          (car lst))
+         (pair s (cdr lst))))))
+
+(define prepend
+  (lambda (lst1 lst2)
+    (if (null? lst1)
+        lst2
+        (cons
+         (car lst1)
+         (prepend (cdr lst1) lst2)))))
+
+(define product
+  (lambda (sos1 sos2)
+    (if (or (null? sos1) (null? sos2))
+        '()
+        (prepend
+         (pair (car sos1) sos2)
+         (product (cdr sos1) sos2)))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
