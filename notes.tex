@@ -697,6 +697,36 @@ The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion 
     (mark-leaves-depth bintree 'red 0)))
 \end{lstlisting}
 
+\subsubsection*{1.34}
+
+The procedure |path| returns a list of |'left| and |'right| symbols to indicate a path to where a given value can be found in a binary search tree.
+
+\begin{lstlisting}
+(define contains
+  (lambda (n bst)
+    (if (null? bst)
+        #f
+        (or
+         (eq? n (car bst))
+         (or
+          (contains n (cadr bst))
+          (contains n (caddr bst)))))))
+
+(define path
+  (lambda (n bst)
+    (if (or (null? bst) (eq? n (car bst)))
+        '()
+        (if (contains n (cadr bst))
+            (cons
+             'left
+             (path n (cadr bst)))
+             (if (contains n (caddr bst))
+                 (cons
+                  'right
+                  (path n (caddr bst)))
+                 '())))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
