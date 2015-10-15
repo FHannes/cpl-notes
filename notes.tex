@@ -11,6 +11,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{textcomp}
+\usepackage{qrcode}
 
 \lstset{
     language=Scheme,
@@ -45,13 +46,19 @@
             \end{center}
         \end{minipage}
     \end{center}
-    \vfill
-    \hfill\makebox[8.5cm][l]{%
-        \vbox to 7cm{\vfill\noindent
-            {\rm \textbf{Fr\'ed\'eric Hannes}}\\[2mm]
-            {\rm Academic year 2015--2016}
-        }
-    }
+    \vfill\vspace*{5cm}
+    \begin{minipage}[t]{0.2\textwidth}
+        \begin{center}
+            @GitHub\\
+            \qrcode{https://github.com/FHannes/cpl-notes}\\
+            {\tt \#\input{rev}}
+        \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.3\textwidth}
+        \vfill\noindent \\[5mm]
+        {\rm \textbf{Fr\'ed\'eric Hannes}}\\[2mm]
+        {\rm Academic year 2015--2016}
+    \end{minipage}
 \end{titlepage}
 
 \tableofcontents
