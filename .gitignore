@@ -14,3 +14,4 @@ rev
 % BaKoMa TeX Word
 *.tex.Backup-*
 *.ddf
+*.bb

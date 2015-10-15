@@ -545,6 +545,195 @@ The procedure |flatten| removes the parenthesis for every list and nested list i
              (flatten (cdr lst)))))))
 \end{lstlisting}
 
+\subsubsection*{1.28}
+
+The procedure |merge| takes two ordered lists of numbers and merges them into a single ordered list.
+
+\begin{lstlisting}
+(define merge
+  (lambda (loi1 loi2)
+    (cond
+      ((and (null? loi1) (null? loi2)) '())
+      ((null? loi1) (cons (car loi2) (merge loi1 (cdr loi2))))
+      ((null? loi2) (cons (car loi1) (merge (cdr loi1) loi2)))
+      (else
+       (if (< (car loi1) (car loi2))
+           (cons (car loi1) (merge (cdr loi1) loi2))
+           (cons (car loi2) (merge loi1 (cdr loi2))))))))
+\end{lstlisting}
+
+\subsubsection*{1.29}
+
+The procedure |sort| takes a list of numbers and sorts them from small to large.
+
+\begin{lstlisting}
+(define smallest
+  (lambda (loi)
+    (if (eq? (length loi) 1)
+        (car loi)
+        (if (< (car loi) (smallest (cdr loi)))
+            (car loi)
+            (smallest (cdr loi))))))
+
+(define remove-first
+  (lambda (s los)
+    (if (null? los)
+        '()
+        (if (eqv? (car los) s)
+            (cdr los)
+            (cons (car los) (remove-first s (cdr los)))))))
+
+(define sort
+  (lambda (loi)
+    (if (null? loi)
+        '()
+        (cons
+         (smallest loi)
+         (sort (remove-first (smallest loi) loi))))))
+\end{lstlisting}
+
+\subsubsection*{1.30}
+
+The procedure |sort/predicate| takes a list of numbers and sorts them based on a given predicate.
+
+\begin{lstlisting}
+(define select
+  (lambda (pred loi)
+    (if (eq? (length loi) 1)
+        (car loi)
+        (if (pred (car loi) (select pred (cdr loi)))
+            (car loi)
+            (select pred (cdr loi))))))
+
+(define remove-first
+  (lambda (s los)
+    (if (null? los)
+        '()
+        (if (eqv? (car los) s)
+            (cdr los)
+            (cons (car los) (remove-first s (cdr los)))))))
+
+(define sort/predicate
+  (lambda (pred loi)
+    (if (null? loi)
+        '()
+        (cons
+         (select pred loi)
+         (sort/predicate pred (remove-first (select pred loi) loi))))))
+\end{lstlisting}
+
+\subsubsection*{1.31}
+
+The procedure |leaf| creates the representation of a leaf in a binary tree. |interior-node| creates a named node with 2 leafs linked to it. |leaf?| returns |#t| if a given value is a leaf. |lson| returns the left leaf/subnode of a node and |rson| the right one. |contents-of| returns the value of a bintree item, which is the value of a leaf or the name of a node.
+
+\begin{lstlisting}
+(define leaf
+  (lambda (v)
+    v))
+
+(define interior-node
+  (lambda (s bt1 bt2)
+    (list s bt1 bt2)))
+
+(define leaf?
+  (lambda (v)
+   (number? v)))
+
+(define lson
+  (lambda (bintree)
+    (cadr bintree)))
+
+(define rson
+  (lambda (bintree)
+    (caddr bintree)))
+
+(define contents-of
+  (lambda (bintree)
+    (if (leaf? bintree)
+        bintree
+        (car bintree))))
+\end{lstlisting}
+
+\subsubsection*{1.32}
+
+The procedure |double-tree| doubles the value of each leaf in a tree.
+
+\begin{lstlisting}
+(define leaf?
+  (lambda (v)
+   (number? v)))
+
+(define double-tree
+  (lambda (bintree)
+    (if (leaf? bintree)
+        (* 2 bintree)
+        (cons
+         (car bintree)
+         (list
+          (double-tree (cadr bintree))
+          (double-tree (caddr bintree)))))))
+\end{lstlisting}
+
+\subsubsection*{1.33}
+
+The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion a given binary tree with the number of times the symbol |'red| is found in a parent node.
+
+\begin{lstlisting}
+(define mark-leaves-depth
+  (lambda (bintree s depth)
+    (if (leaf? bintree)
+        depth
+        (cons
+         (car bintree)
+         (list
+          (mark-leaves-depth
+           (cadr bintree)
+           s
+           (if (eqv? s (car bintree))
+               (+ 1 depth)
+               depth))
+          (mark-leaves-depth
+           (caddr bintree)
+           s
+           (if (eqv? s (car bintree))
+               (+ 1 depth)
+               depth)))))))
+
+(define mark-leaves-with-red-depth
+  (lambda (bintree)
+    (mark-leaves-depth bintree 'red 0)))
+\end{lstlisting}
+
+\subsubsection*{1.34}
+
+The procedure |path| returns a list of |'left| and |'right| symbols to indicate a path to where a given value can be found in a binary search tree.
+
+\begin{lstlisting}
+(define contains
+  (lambda (n bst)
+    (if (null? bst)
+        #f
+        (or
+         (eq? n (car bst))
+         (or
+          (contains n (cadr bst))
+          (contains n (caddr bst)))))))
+
+(define path
+  (lambda (n bst)
+    (if (or (null? bst) (eq? n (car bst)))
+        '()
+        (if (contains n (cadr bst))
+            (cons
+             'left
+             (path n (cadr bst)))
+             (if (contains n (caddr bst))
+                 (cons
+                  'right
+                  (path n (caddr bst)))
+                 '())))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
