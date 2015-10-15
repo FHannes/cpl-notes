@@ -732,7 +732,7 @@ The procedure |number-leaves| takes a given bintree and returns a tree with the 
     (if (leaf? bintree)
         (leaf n)
         (interior-node
-         (car bintree)
+         (contents-of bintree)
          (number-bintree (lson bintree) n)
          (number-bintree (rson bintree) (+ n (count-leaves (lson bintree))))))))
 
@@ -742,6 +742,34 @@ The procedure |number-leaves| takes a given bintree and returns a tree with the 
 \end{lstlisting}
 
 |leaf|, |interior-node|, |leaf?|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
+
+\subsubsection*{Exercise 1.36}
+
+The procedure |number-elements| takes a list of elements and returns a list of pais, where every pair is the index of an element from the original list, paired with the element itself.
+
+\begin{lstlisting}
+(define f
+  (lambda (lst rlst n)
+    (cons
+     (list
+      (+ (car lst) n)
+      (cadr lst))
+     (if (null? rlst)
+         '()
+         (f
+          (car rlst)
+          (cdr rlst)
+          1)))))
+
+(define g
+  (lambda (lst rlst)
+    (f lst rlst 0)))
+
+(define number-elements
+  (lambda (lst)
+    (if (null? lst) '()
+        (g (list 0 (car lst)) (number-elements (cdr lst))))))
+\end{lstlisting}
 
 \newpage
 
