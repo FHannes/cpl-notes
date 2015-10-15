@@ -775,6 +775,54 @@ The procedure |number-elements| takes a list of elements and returns a list of p
 
 \subsection{Chapter 2}
 
+\subsubsection{Exercise 2.1}
+
+The procedure |factorial| takes a base and a number is bigits for that base, for which it will determine the factorial for that number in bigits for that same base. The base operations for the bigits datatype are defined as |zero|, |is-zero?|, |successor| and |predecessor|. To build |factorial|, the mathematical operations |plus| and |times| have also been defined.
+
+As the base gets larger, the time required to compute the |factorial| decreases. This can be explained by the fact that less bigits will be required to represent larger numbers, which means that there have to be less recursive |successor| and |predecessor| to calculate the result.
+
+\begin{lstlisting}
+(define zero (lambda () '()))
+
+(define is-zero? (lambda (bigits) (null? bigits)))
+
+(define successor
+  (lambda (N bigits)
+    (if (is-zero? bigits)
+        '(1)
+        (if (eq? (car bigits) (- N 1))
+            (cons 0 (successor N (cdr bigits)))
+            (cons (+ 1 (car bigits)) (cdr bigits))))))
+
+(define predecessor
+  (lambda (N bigits)
+    (if (eq? (car bigits) 0)
+        (cons (- N 1) (predecessor N (cdr bigits)))
+        (if (and
+             (eq? (- (car bigits) 1) 0)
+             (null? (cdr bigits)))
+            (zero)
+            (cons (- (car bigits) 1) (cdr bigits))))))
+
+(define plus
+  (lambda (N bigits1 bigits2)
+    (if (is-zero? bigits2)
+        bigits1
+        (plus N (successor N bigits1) (predecessor N bigits2)))))
+
+(define times
+  (lambda (N bigits1 bigits2)
+    (if (is-zero? bigits2)
+        (zero)
+        (plus N bigits1 (times N bigits1 (predecessor N bigits2))))))
+
+(define factorial
+  (lambda (N bigits)
+    (if (is-zero? bigits)
+        '(1)
+        (times N bigits (factorial N (predecessor N bigits))))))
+\end{lstlisting}
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
