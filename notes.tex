@@ -219,11 +219,11 @@ My first attempt can be improved by extracting the |cons| call from both express
 
 \subsection{Chapter 1}
 
-\subsubsection*{Exercise 1.6}
+\subsubsection{Exercise 1.6}
 
 If we reversed the order of checks in |nth-element|, nothing would go wrong, but we would have to perform the initial check in both branches of the |if| for the second check.
 
-\subsubsection*{Exercise 1.7}
+\subsubsection{Exercise 1.7}
 
 We introduce a helper procedure |nth-element-helper| to easily preserve the original given list.
 
@@ -246,14 +246,14 @@ We introduce a helper procedure |nth-element-helper| to easily preserve the orig
     (nth-element-helper lst lst n)))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.8}
+\subsubsection{Exercise 1.8}
 
 If the last line of |remove-first| were to be replaced with |(remove-first s (cdr los))|, it would be defined as:
 
 \textbf{remote-first} : \textit{Sym $\times$ Listof(Sym) $\rightarrow$ Listof(Sym)}\\
 \textbf{usage:} |(remove-first s los)| returns a list with all elements starting after the first occurrence of the symbol |s| in the list |los|.
 
-\subsubsection*{Exercise 1.9}
+\subsubsection{Exercise 1.9}
 
 We define |remove| as a procedure which removes every occurrence of a given symbol from a given list.
 
@@ -267,17 +267,17 @@ We define |remove| as a procedure which removes every occurrence of a given symb
             (cons (car l) (remove s (cdr l)))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.10}
+\subsubsection{Exercise 1.10}
 
 Though typically ``or'' refers to ``inclusive or'', ``exclusive or'' also exists. The statement ``A or B'' for the inclusive variant, will evaluate to true (if it is a logical expression) when either A and/or B are true. The exclusive variant, often referred to as ``xor'', will for ``A xor B'' only evaluate to true if A or B are true, but not when both are true or false.
 
 \subparagraph{NOTE} When we refer to bitwise operations, rather than logical ones, ``A or B'' will perform the same logic as it would for a logical expression, at the binary level. E.g. ``1001 or 0101'' evaluates to 1101, which translates to the decimal system as ``9 or 5 = 13''. ``1001 xor 0101'' evaluates to 1100, which translates to the decimal system as ``9 xor 5 = 12''.
 
-\subsubsection*{Exercise 1.11}
+\subsubsection{Exercise 1.11}
 
 The |subst-in-s-exp| procedure is called with the first element of the parameter |slist| in |subst|, it only passes this back to |subst| if it is not a symbol. This means it works down into the tree of nested lists. Once the deepest nested list has been reached, recursion will automatically halt.
 
-\subsubsection*{Exercise 1.12}
+\subsubsection{Exercise 1.12}
 
 The procedure |subst| defined below has |subst-in-s-exp| inlined.
 
@@ -293,7 +293,7 @@ The procedure |subst| defined below has |subst-in-s-exp| inlined.
          (subst new old (cdr slist))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.13}
+\subsubsection{Exercise 1.13}
 
 The procedure |map| is used to process the slist in the altered version of |subst|.
 
@@ -306,7 +306,7 @@ The procedure |map| is used to process the slist in the altered version of |subs
                (subst new old sexp))) slist)))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.15}
+\subsubsection{Exercise 1.15}
 
 The procedure |duple| returns a list with an input value duplicated a certain number of times.
 
@@ -318,7 +318,7 @@ The procedure |duple| returns a list with an input value duplicated a certain nu
         (cons x (duple (- n 1) x)))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.16}
+\subsubsection{Exercise 1.16}
 
 The procedure |invert| swaps the elements of every pair in a list of pairs.
 
@@ -332,7 +332,7 @@ The procedure |invert| swaps the elements of every pair in a list of pairs.
          (invert (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.17}
+\subsubsection{Exercise 1.17}
 
 The procedure |down| wraps every top-level element of a given list in a list.
 
@@ -346,7 +346,7 @@ The procedure |down| wraps every top-level element of a given list in a list.
          (down (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.18}
+\subsubsection{Exercise 1.18}
 
 The procedure |swapper| swaps every given 2 symbols in a given list and its nested lists.
 
@@ -363,7 +363,7 @@ The procedure |swapper| swaps every given 2 symbols in a given list and its nest
      slist)))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.19}
+\subsubsection{Exercise 1.19}
 
 The procedure |list-set| replaces the element at a certain given zero-offset position in a list by a different one.
 
@@ -379,7 +379,7 @@ The procedure |list-set| replaces the element at a certain given zero-offset pos
          (list-set (cdr lst) (- n 1) x)))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.20}
+\subsubsection{Exercise 1.20}
 
 The procedure |count-occurrences| counts the amount of times that a given symbol is rpesent in a given list or any nested list in that list.
 
@@ -395,7 +395,7 @@ The procedure |count-occurrences| counts the amount of times that a given symbol
          (count-occurrences s (cdr slist))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.21}
+\subsubsection{Exercise 1.21}
 
 The procedure |product| returns a list of pairs which represent the Cartesian product of two given lists.
 
@@ -427,7 +427,7 @@ The procedure |product| returns a list of pairs which represent the Cartesian pr
          (product (cdr sos1) sos2)))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.22}
+\subsubsection{Exercise 1.22}
 
 The procedure |filter-in| returns a list containing only the top-level elements of a given list for which a given predicate evaluates to |#t|.
 
@@ -443,7 +443,7 @@ The procedure |filter-in| returns a list containing only the top-level elements 
             (filter-in pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.23}
+\subsubsection{Exercise 1.23}
 
 The procedure |list-index| returns the position of the first element of a given list for which a given predicate returns |#t|. If the predicate is false for every element of the list, the procedure returns |#f|.
 
@@ -465,7 +465,7 @@ The procedure |list-index| returns the position of the first element of a given 
              1)))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.24}
+\subsubsection{Exercise 1.24}
 
 The procedure |every?| returns |#t| if every element of a given list evaluates to |#t| for a given predicate and |#f| if it does not.
 
@@ -479,7 +479,7 @@ The procedure |every?| returns |#t| if every element of a given list evaluates t
          (every? pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.25}
+\subsubsection{Exercise 1.25}
 
 The procedure |exists?| returns |#t| if at least one element of a given list evaluates to |#t| for a given predicate and |#f| if none do.
 
@@ -493,7 +493,7 @@ The procedure |exists?| returns |#t| if at least one element of a given list eva
          (exists? pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.26}
+\subsubsection{Exercise 1.26}
 
 The procedure |up| removes the parenthesis for every top-level list in a given list.
 
@@ -513,7 +513,7 @@ The procedure |up| removes the parenthesis for every top-level list in a given l
 
 |prepend| is defined in exercise 1.21.
 
-\subsubsection*{Exercise 1.27}
+\subsubsection{Exercise 1.27}
 
 The procedure |flatten| removes the parenthesis for every list and nested list in a given list.
 
@@ -533,7 +533,7 @@ The procedure |flatten| removes the parenthesis for every list and nested list i
 
 |prepend| is defined in exercise 1.21.
 
-\subsubsection*{Exercise 1.28}
+\subsubsection{Exercise 1.28}
 
 The procedure |merge| takes two ordered lists of numbers and merges them into a single ordered list.
 
@@ -550,7 +550,7 @@ The procedure |merge| takes two ordered lists of numbers and merges them into a 
            (cons (car loi2) (merge loi1 (cdr loi2))))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.29}
+\subsubsection{Exercise 1.29}
 
 The procedure |sort| takes a list of numbers and sorts them from small to large.
 
@@ -580,7 +580,7 @@ The procedure |sort| takes a list of numbers and sorts them from small to large.
          (sort (remove-first (smallest loi) loi))))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.30}
+\subsubsection{Exercise 1.30}
 
 The procedure |sort/predicate| takes a list of numbers and sorts them based on a given predicate.
 
@@ -604,7 +604,7 @@ The procedure |sort/predicate| takes a list of numbers and sorts them based on a
 
 |remove-first| is defined in exercise 1.29.
 
-\subsubsection*{Exercise 1.31}
+\subsubsection{Exercise 1.31}
 
 The procedure |leaf| creates the representation of a leaf in a binary tree. |interior-node| creates a named node with 2 leafs linked to it. |leaf?| returns |#t| if a given value is a leaf. |lson| returns the left leaf/subnode of a node and |rson| the right one. |contents-of| returns the value of a bintree item, which is the value of a leaf or the name of a node.
 
@@ -636,7 +636,7 @@ The procedure |leaf| creates the representation of a leaf in a binary tree. |int
         (car bintree))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.32}
+\subsubsection{Exercise 1.32}
 
 The procedure |double-tree| doubles the value of each leaf in a tree.
 
@@ -653,7 +653,7 @@ The procedure |double-tree| doubles the value of each leaf in a tree.
 
 |leaf|, |leaf?|, |interior-node|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
 
-\subsubsection*{Exercise 1.33}
+\subsubsection{Exercise 1.33}
 
 The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion a given binary tree with the number of times the symbol |'red| is found in a parent node.
 
@@ -684,7 +684,7 @@ The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion 
 
 |leaf|, |leaf?|, |interior-node|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
 
-\subsubsection*{Exercise 1.34}
+\subsubsection{Exercise 1.34}
 
 The procedure |path| returns a list of |'left| and |'right| symbols to indicate a path to where a given value can be found in a binary search tree.
 
@@ -714,7 +714,7 @@ The procedure |path| returns a list of |'left| and |'right| symbols to indicate 
                  '())))))
 \end{lstlisting}
 
-\subsubsection*{Exercise 1.35}
+\subsubsection{Exercise 1.35}
 
 The procedure |number-leaves| takes a given bintree and returns a tree with the same structure where the leaves have been replaced with their count from 0 to n-1, starting from the left-most leaf going to the right-most leaf in the tree.
 
@@ -743,9 +743,9 @@ The procedure |number-leaves| takes a given bintree and returns a tree with the 
 
 |leaf|, |interior-node|, |leaf?|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
 
-\subsubsection*{Exercise 1.36}
+\subsubsection{Exercise 1.36}
 
-The procedure |number-elements| takes a list of elements and returns a list of pais, where every pair is the index of an element from the original list, paired with the element itself.
+The procedure |number-elements| takes a list of elements and returns a list of pairs, where every pair is the index of an element from the original list, paired with the element itself.
 
 \begin{lstlisting}
 (define f
@@ -770,6 +770,10 @@ The procedure |number-elements| takes a list of elements and returns a list of p
     (if (null? lst) '()
         (g (list 0 (car lst)) (number-elements (cdr lst))))))
 \end{lstlisting}
+
+\newpage
+
+\subsection{Chapter 2}
 
 \newpage
 
