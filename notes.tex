@@ -61,6 +61,11 @@
     \end{minipage}
 \end{titlepage}
 
+%\setcounter{secnumdepth}{4}
+%\setcounter{tocdepth}{4}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
+
 \tableofcontents
 
 \newpage
@@ -73,7 +78,9 @@ This document contains my notes for the course Comparative Programming Languages
 
 \section{Code}
 
-\subsection{in-S?}
+\subsection{Chapter 1}
+
+\subsubsection{in-S?}
 
 The set $S$ is defined as a set containing any natural number $n$ where $n = 0$ or $n - 3 \in S$. The procedure |in-S?| returns |#t| if a given value is part of the set $S$ and |#f| if it is not.
 
@@ -85,7 +92,7 @@ The set $S$ is defined as a set containing any natural number $n$ where $n = 0$ 
             (in-S? (- x 3))))))
 \end{lstlisting}
 
-\subsection{list-length}
+\subsubsection{list-length}
 
 The procedure |list-length| returns the number of elements in a given list. This functionality is available as |length| in the Racket API.
 
@@ -98,7 +105,7 @@ The procedure |list-length| returns the number of elements in a given list. This
         (+ 1 (list-length (cdr lst))))))
 \end{lstlisting}
 
-\subsection{nth-element}
+\subsubsection{nth-element}
 
 The procedure |nth-element| returns the element from a given list at a given position. This functionality is available as |list-ref| in the Racket API.
 
@@ -121,7 +128,7 @@ The procedure |nth-element| returns the element from a given list at a given pos
             (nth-element (cdr lst) (- n 1))))))
 \end{lstlisting}
 
-\subsection{remove-first}
+\subsubsection{remove-first}
 
 The procedure |remove-first| returns a given list without the first occurrence of a given symbol. If the list is empty, an empty list is returned. If the list does not contain the given symbol, the given list is returned. This functionality is available as |remv| in the Racket API.
 
@@ -136,7 +143,7 @@ The procedure |remove-first| returns a given list without the first occurrence o
             (cons (car los) (remove-first s (cdr los)))))))
 \end{lstlisting}
 
-\subsection{occurs-free?}
+\subsubsection{occurs-free?}
 
 The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and returns |#t| if a given variable is not a bound variable in that expression. This means that it does not occur as a named parameter for any of the |lambda| expressions in the given expression.
 
@@ -156,7 +163,7 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
         (occurs-free? var (cadr exp)))))))
 \end{lstlisting}
 
-\subsubsection*{Lines reference}
+\subsubsubsection{Lines reference}
 
 \begin{enumerate}
 \setcounter{enumi}{3}
@@ -170,11 +177,11 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
 \item To grab the second value of the pair, we have to first get the list of expressions symbols that does not contain the initial symbol, which we've already evaluated using |cdr| and next get the first (and only) symbol of that list using |car|. This line is only executed, if the previous line did not evaluate to |#t|.
 \end{enumerate}
 
-\subsection{subst}
+\subsubsection{subst}
 
 The procedure |subst| takes 2 symbols and an s-list, which is defined as a list containing symbols and/or s-lists. The procedure should replace every occurrence of one of the given symbols in the list and all nested lists by the other given symbol, referred to as |old| and |new| respectively.
 
-\subsubsection*{First attempt}
+\subsubsubsection{First attempt}
 
 \textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
 \begin{lstlisting}[aboveskip=0pt]
@@ -191,7 +198,7 @@ The procedure |subst| takes 2 symbols and an s-list, which is defined as a list 
 
 My first attempt can be improved by extracting the |cons| call from both expressions passed to the second |if| call, as the second expression in each |cons| call is the same.
 
-\subsubsection*{Textbook}
+\subsubsubsection{Textbook}
 
 \textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-exp $\rightarrow$ S-exp}
 \begin{lstlisting}[aboveskip=0pt]
@@ -202,7 +209,7 @@ My first attempt can be improved by extracting the |cons| call from both express
         (subst new old sexp))))
 \end{lstlisting}
 
-\textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
+\textbf{subst-in-s-exp} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
 \begin{lstlisting}[aboveskip=0pt]
 (define subst
   (lambda (new old slist)
@@ -211,6 +218,54 @@ My first attempt can be improved by extracting the |cons| call from both express
         (cons
          (subst-in-s-exp new old (car slist))
          (subst new old (cdr slist))))))
+\end{lstlisting}
+
+\newpage
+
+\subsection{Chapter 2}
+
+\subsubsection{Environment data-structure}
+\label{sec:env}
+
+The following code represents the data-structure for an environment. |empty-env| creates a new empty environment. |extend-env| extends an environment by assigning a given value to a given variable name in a given environment. |apply-env| returns the value assigned to a given variable in a given environment.
+
+\textbf{empty-env} : \textit{() $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define empty-env
+  (lambda ()
+    (list 'empty-env)))
+\end{lstlisting}
+
+\textbf{extend-env} : \textit{Var $\times$ SchemeVal $\times$ Env $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define extend-env
+  (lambda (var val env)
+    (list 'extend-env var val env)))
+\end{lstlisting}
+
+\textbf{apply-env} : \textit{Env $\times$ Var $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((eqv? (car env) 'empty-env)
+       (report-no-binding-found search-var))
+      ((eqv? (car env) 'extend-env)
+       (let ((saved-var (cadr env))
+             (saved-val (caddr env))
+             (saved-env (cadddr env)))
+         (if (eqv? search-var saved-var)
+             saved-val
+             (apply-env saved-env search-var))))
+      (else (report-invalid-env)))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (eopl:error 'apply-env "No binding for ~s" search-var)))
+
+(define report-invalid-env
+  (lambda (env)
+    (eopl:error 'apply-env "Bad environment: ~s" env)))
 \end{lstlisting}
 
 \newpage
@@ -823,6 +878,40 @@ As the base gets larger, the time required to compute the |factorial| decreases.
         (times N bigits (factorial N (predecessor N bigits))))))
 \end{lstlisting}
 
+\subsubsection{Exercise 2.4}
+
+The procedure |empty-stack| returns an empty stack. |push| adds a given element to the top of a given stack. |pop| removes an element from the top of a given stack. |top| returns the element at the top of a given stack. |empty-stack?| returns |#t| if a stack is empty.
+
+|empty-stack|, |push| an |pop| are constructors, as they create or modify a given stack. |top| and |empty-stack?| are observers as they only retrieve data from a given stack.
+
+\begin{lstlisting}
+(define empty-stack (lambda () '()))
+
+(define push
+  (lambda (val stack)
+    (if (list? stack)
+        (cons val stack)
+        (eopl:error 'push "Invalid stack"))))
+
+(define pop
+  (lambda (stack)
+    (cond
+      ((empty-stack? stack) (eopl:error 'pop "Stack is empty"))
+      ((list? stack) (cdr stack))
+      (else (eopl:error 'pop "Invalid stack")))))
+
+(define top
+  (lambda (stack)
+    (cond
+      ((empty-stack? stack) (eopl:error 'top "Stack is empty"))
+      ((list? stack) (car stack))
+      (else (eopl:error 'top "Invalid stack")))))
+    
+(define empty-stack?
+  (lambda (stack)
+    (null? stack)))
+\end{lstlisting}
+
 \subsubsection{Exercise 2.5}
 
 The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an environment as a linked list, with the empty environment as an empty list.
@@ -843,15 +932,9 @@ The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an 
            (cadar env)
            (apply-env (cadr env) search-var)))
       (else (report-invalid-env env)))))
-
-(define report-no-binding-found
-  (lambda (search-var)
-    (eopl:error 'apply-env "No binding for ~s" search-var)))
-
-(define report-invalid-env
-  (lambda (env)
-    (eopl:error 'apply-env "Bad environment: ~s" env)))
 \end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
 
 \subsubsection{Exercise 2.6}
 
@@ -895,7 +978,7 @@ Another alternative is a sequential listing of variables and values, which are n
       (else (report-invalid-env env)))))
 \end{lstlisting}
 
-|report-no-binding-found| and |report-invalid-env| are defined in exercise 2.5.
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
 
 \newpage
 
