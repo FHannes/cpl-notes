@@ -779,7 +779,7 @@ The procedure |number-elements| takes a list of elements and returns a list of p
 
 The procedure |factorial| takes a base and a number is bigits for that base, for which it will determine the factorial for that number in bigits for that same base. The base operations for the bigits datatype are defined as |zero|, |is-zero?|, |successor| and |predecessor|. To build |factorial|, the mathematical operations |plus| and |times| have also been defined.
 
-As the base gets larger, the time required to compute the |factorial| decreases. This can be explained by the fact that less bigits will be required to represent larger numbers, which means that there have to be less recursive |successor| and |predecessor| to calculate the result.
+As the base gets larger, the time required to compute the |factorial| decreases. This can be explained by the fact that less bigits will be required to represent larger numbers, which means that there have to be less recursive |successor| and |predecessor| calls made to calculate the result.
 
 \begin{lstlisting}
 (define zero (lambda () '()))
@@ -822,6 +822,80 @@ As the base gets larger, the time required to compute the |factorial| decreases.
         '(1)
         (times N bigits (factorial N (predecessor N bigits))))))
 \end{lstlisting}
+
+\subsubsection{Exercise 2.5}
+
+The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an environment as a linked list, with the empty environment as an empty list.
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (list (list var val) env)))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (pair? env) (pair? (car env))) (list? (cadr env)))
+       (if (eqv? (caar env) search-var)
+           (cadar env)
+           (apply-env (cadr env) search-var)))
+      (else (report-invalid-env env)))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (eopl:error 'apply-env "No binding for ~s" search-var)))
+
+(define report-invalid-env
+  (lambda (env)
+    (eopl:error 'apply-env "Bad environment: ~s" env)))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.6}
+
+A first alternate representation is a linked list, as seen in exercise 2.5. An alternative to the linked list is a list of pairs:
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (cons (list var val) env)))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (list? env) (pair? (car env))) (list? (cdr env)))
+       (if (eqv? (caar env) search-var)
+           (cadar env)
+           (apply-env (cdr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+Another alternative is a sequential listing of variables and values, which are not specifically grouped, just listed in sequence:
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (cons var (cons val env))))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (list? env) (symbol? (car env))) (not (null? (cdr env))))
+       (if (eqv? (car env) search-var)
+           (cadr env)
+           (apply-env (cddr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in exercise 2.5.
 
 \newpage
 
