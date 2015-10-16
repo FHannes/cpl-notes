@@ -914,7 +914,7 @@ The procedure |empty-stack| returns an empty stack. |push| adds a given element 
 
 \subsubsection{Exercise 2.5}
 
-The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an environment as a linked list, with the empty environment as an empty list.
+The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an environment as an association list (a-list), with the empty environment as an empty list.
 
 \begin{lstlisting}
 (define empty-env (lambda () '()))
@@ -938,7 +938,7 @@ The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an 
 
 \subsubsection{Exercise 2.6}
 
-A first alternate representation is a linked list, as seen in exercise 2.5. An alternative to the linked list is a list of pairs:
+A first alternate representation is a linked list, as seen in exercise 2.5. An alternative to the a-list is a list of pairs:
 
 \begin{lstlisting}
 (define empty-env (lambda () '()))
@@ -979,6 +979,51 @@ Another alternative is a sequential listing of variables and values, which are n
 \end{lstlisting}
 
 |report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.8}
+
+The procedure |empty-env?| returns |#t| if a given environment is empty. This procedure works for the original interface defined in section \ref{sec:env}, as well as those defined in exercises 2.5 and 2.6.
+
+\begin{lstlisting}
+(define empty-env?
+  (lambda (env)
+    (equal? env (empty-env))))
+\end{lstlisting}
+
+|empty-env| is defined in the sections and exercises mentioned above the code.
+
+\subsubsection{Exercise 2.9}
+
+The procedure |has-binding?| returns |#t| if a given environment contains a binding for a given variable. The following implementation works with the interface defined in section \ref{sec:env}.
+
+\begin{lstlisting}
+(define has-binding?
+  (lambda (env search-var)
+    (cond
+      ((eqv? (car env) 'empty-env) #f)
+      ((eqv? (car env) 'extend-env)
+       (let ((saved-var (cadr env))
+             (saved-val (caddr env))
+             (saved-env (cadddr env)))
+         (or (eqv? search-var saved-var)
+             (has-binding? saved-env search-var))))
+      (else (report-invalid-env)))))
+\end{lstlisting}
+
+An alternative implementation for a-lists used in exercise 2.5 can also be defined.
+
+\begin{lstlisting}
+(define has-binding?
+  (lambda (env search-var)
+    (cond
+      ((null? env) #f)
+      ((and (and (list? env) (pair? (car env))) (list? (cdr env)))
+       (or (eqv? (caar env) search-var)
+           (has-binding? (cdr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+|report-invalid-env| is defined in the code in section \ref{sec:env}.
 
 \newpage
 
