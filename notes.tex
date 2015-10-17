@@ -109,14 +109,6 @@ The procedure |list-length| returns the number of elements in a given list. This
 
 The procedure |nth-element| returns the element from a given list at a given position. This functionality is available as |list-ref| in the Racket API.
 
-\textbf{report-list-too-short} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ Error}
-\begin{lstlisting}[aboveskip=0pt]
-(define report-list-too-short
-  (lambda (n)
-    (eopl:error 'nth-element
-                "List too short by ~s elements.~%" (+ n 1))))
-\end{lstlisting}
-
 \textbf{nth-element} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ SchemeVal}
 \begin{lstlisting}[aboveskip=0pt]
 (define nth-element
@@ -126,6 +118,11 @@ The procedure |nth-element| returns the element from a given list at a given pos
         (if (zero? n)
             (car lst)
             (nth-element (cdr lst) (- n 1))))))
+            
+(define report-list-too-short
+  (lambda (n)
+    (eopl:error 'nth-element
+                "List too short by ~s elements.~%" (+ n 1))))
 \end{lstlisting}
 
 \subsubsection{remove-first}
@@ -1024,6 +1021,62 @@ An alternative implementation for a-lists used in exercise 2.5 can also be defin
 \end{lstlisting}
 
 |report-invalid-env| is defined in the code in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.10}
+
+The procedure |extend-env*| extends a given environment with a given list of variables and a given list of their respective values. The procedure defined below is intended for use with the a-list interface defined in exercise 2.5.
+
+\begin{lstlisting}
+(define extend-env*
+  (lambda (vars vals env)
+    (if (or (null? vars) (null? vals))
+            env
+            (list
+             (list
+              (car vars)
+              (car vals))
+             (extend-env* (cdr vars) (cdr vals) env)))))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.11}
+
+The procedure |extend-env*| extends a given environment with a given list of variables and a given list of their respective values. This particular implementation uses a backbone structure to perform the operation of extending the environment in constant time. The rest of the interface for the environment based on a backbone structure has also been provided as |empty-env|, |extend-env| and |apply-env|.
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (list (list (list var) (list val)) env)))
+
+(define find-env-value
+  (lambda (vars vals search-var)
+    (if (or (null? vars) (null? vals))
+        #f
+        (if (eqv? (car vars) search-var)
+            (car vals)
+            (find-env-value (cdr vars) (cdr vals) search-var)))))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (and (and (pair? env) (pair? (car env)))(list? (caar env)))
+                 (list? (cadar env))) (list? (cadr env)))
+       (let ([val (find-env-value (caar env) (cadar env) search-var)])
+         (if (eq? val #f)
+             (apply-env (cadr env) search-var)
+             val)))
+      (else (report-invalid-env env)))))
+      
+(define extend-env*
+  (lambda (vars vals env)
+    (if (or (null? vars) (null? vals))
+            env
+            (list (list vars vals) env))))
+\end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
 
 \newpage
 
