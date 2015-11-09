@@ -265,6 +265,40 @@ The following code represents the data-structure for an environment. |empty-env|
     (eopl:error 'apply-env "Bad environment: ~s" env)))
 \end{lstlisting}
 
+\subsubsection{Procedural environment}
+\label{sec:proc_env}
+
+The following code is a procedural representation of the environment data)structure introduced in section \ref{sec:env}. The environment is defined as a procedure that takes a |search-var| argument to find the value bound to a variable, if there is one in the environment. |apply-env| is still used as a wrapper around this functionality to provire an interface consistant with the original list-based definition.
+
+\textbf{empty-env} : \textit{() $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define empty-env
+  (lambda ()
+    (lambda (search-var)
+      (report-no-binding-found search-var))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (eopl:error 'apply-env "No binding for ~s" search-var)))
+\end{lstlisting}
+
+\textbf{extend-env} : \textit{Var $\times$ SchemeVal $\times$ Env $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (lambda (search-var)
+      (if (eqv? search-var saved-var)
+          saved-val
+          (apply-env saved-env search-var)))))
+\end{lstlisting}
+
+\textbf{apply-env} : \textit{Env $\times$ Var $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
+(define apply-env
+  (lambda (env search-var)
+    (env search-var)))
+\end{lstlisting}
+
 \newpage
 
 \section{Exercises}
@@ -1077,6 +1111,127 @@ The procedure |extend-env*| extends a given environment with a given list of var
 \end{lstlisting}
 
 |report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.12}
+
+The follow code represents a stack implementation as seen in exercise 2.4, using a procedural representation. The stack, which is initialized with the |empty-stack| procedure is a procedure itself. This procedure is extended by |push| and only takes a single argument, which defines the action that is being performed on the stack. |'top| returns the top element of the stack. |'pop| removes the top element from the stack, which means that the stack is return as it was before the last push call. Finally, |'empty| returns |#t| if the stack is empty and |#f| if it is not. These actions are never performed on the stack directly, but are neatly wrapped in the procedures |pop|, |top| and |empty-stack?| as they were defined in exercise 2.4.
+
+\begin{lstlisting}
+(define empty-stack 
+  (lambda () 
+    (lambda (action)
+      (if (eq? action 'empty) #t (eopl:error action "Invalid stack")))))
+
+(define push
+   (lambda (val stack)
+     (lambda (action)
+       (cond
+         ((eq? action 'top) val)
+         ((eq? action 'pop) stack)
+         ((eq? action 'empty) #f)))))
+
+(define pop
+   (lambda (stack)
+      (stack 'pop)))
+
+(define top
+   (lambda (stack)
+      (stack 'top)))
+
+(define empty-stack?
+   (lambda (stack)
+      (stack 'empty)))
+\end{lstlisting}
+
+An alternative implementation can define the stack as a list of the three operations |pop|, |top| and |empty-stack?|, by storing procedures for each operation in the list.
+
+\begin{lstlisting}
+(define empty-stack 
+  (lambda () 
+    (list
+     (lambda () (eopl:error 'stack "Invalid stack"))
+     (lambda () (eopl:error 'stack "Invalid stack"))
+     (lambda () #t))))
+
+(define push
+   (lambda (val stack)
+     (list
+      (lambda () val)
+      (lambda () stack)
+      (lambda () #f))))
+
+(define pop
+   (lambda (stack)
+      ((cadr stack))))
+
+(define top
+   (lambda (stack)
+      ((car stack))))
+
+(define empty-stack?
+   (lambda (stack)
+      ((caddr stack))))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.13}
+
+The follow code is an extension to the procedural environment representation seen in section \ref{sec:proc_env}. The environment is represented as a list of two procedure, of which the first is the equivalent of |apply-env| and the second of |empty-env?|. These procedures also exist as wrappers to provide a clean interface to the environment.
+
+\begin{lstlisting}
+(define empty-env
+  (lambda ()
+    (list
+     (lambda (search-var) (report-no-binding-found search-var))
+     (lambda () #t))))
+
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (list
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           saved-val
+           (apply-env saved-env search-var)))
+     (lambda () #f))))
+
+(define apply-env
+  (lambda (env search-var) ((car env) search-var)))
+
+(define empty-env?
+  (lambda (env) ((cadr env))))
+\end{lstlisting}
+
+|report-no-binding-found| is defined in the code for environments in section \ref{sec:proc_env}.
+
+\subsubsection{Exercise 2.14}
+
+The follow code is an extension to the procedural environment defined in exercise 2.13, which adds a third procedure to the list that represents the environment, which returns |#t| if a given variable has a binding. This is wrapped by the added procedure |has-binding?|.
+
+\begin{lstlisting}
+(define empty-env
+  (lambda ()
+    (list
+     (lambda (search-var) (report-no-binding-found search-var))
+     (lambda () #t)
+     (lambda (search-var) #f))))
+
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (list
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           saved-val
+           (apply-env saved-env search-var)))
+     (lambda () #f)
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           #t
+           (has-binding? saved-env search-var))))))
+
+(define has-binding?
+  (lambda (env search-var) ((caddr env) search-var)))
+\end{lstlisting}
+
+|report-no-binding-found| is defined in the code for environments in section \ref{sec:proc_env}. The |apply-env| and |empty-env?| procedures from exercise 2.13 remain the same for this new environment.
 
 \newpage
 

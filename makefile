@@ -1,7 +1,7 @@
 INPUT_NAME = notes
 OUTPUT_NAME = cpl-notes
 
-all: build
+all: clean build
 
 build: ${OUTPUT_NAME}.pdf
 
