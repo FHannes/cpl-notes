@@ -1233,6 +1233,80 @@ The follow code is an extension to the procedural environment defined in exercis
 
 |report-no-binding-found| is defined in the code for environments in section \ref{sec:proc_env}. The |apply-env| and |empty-env?| procedures from exercise 2.13 remain the same for this new environment.
 
+\subsubsection{Exercise 2.15}
+
+The follow code is $\lambda$-calculus expression interface consisting out of various procedures. |var-exp| generates a variable expression, |lambda-exp| a lambda-expression and |app-exp| an application expression. The proceures |var-exp?|, |lambda-exp?| and |app-exp?| respectively validate if a given expression is of the requested type. |var-exp->var| returns the variable from a variable expression. |lambda-exp->bound-var| returns the bound variable in a lambda-expression and |lambda-exp->body| returns the body. |app-exp->rator| returns the operator of an application expression and |app-exp->rand| the operand.
+
+\begin{lstlisting}
+(define var-exp
+  (lambda (var) var))
+
+(define lambda-exp
+  (lambda (bound-var body) (list 'lambda (list bound-var) body)))
+   
+(define app-exp
+  (lambda (rator rand) (list rator rand)))
+  
+(define var-exp?
+  (lambda (exp) (symbol? exp)))
+  
+(define lambda-exp?
+  (lambda (exp)
+    (and 
+     (list? exp) 
+     (and
+      (eq? (length exp) 3)
+      (and
+       (eqv? (car exp) 'lambda)
+       (and
+        (list? (cadr exp))
+        (and
+         (eq? (length (cadr exp)) 1)
+         (symbol? (caadr exp)))))))))
+
+(define app-exp?
+  (lambda (exp) (and (list? exp) (eq? (length exp) 2))))
+
+(define var-exp->var
+  (lambda (exp) exp))
+
+(define lambda-exp->bound-var
+  (lambda (exp) (caadr exp)))
+
+(define lambda-exp->body
+  (lambda (exp) (caddr exp)))
+
+(define app-exp->rator
+  (lambda (exp) (car exp)))
+
+(define app-exp->rand
+  (lambda (exp) (cadr exp)))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.16}
+
+The follow code is an adaptation of the interface defined in exercise 2.15, where the bound variable of a $\lambda$-calculus expression is not surrounded by parantheses.
+
+\begin{lstlisting}
+(define lambda-exp
+  (lambda (bound-var body) (list 'lambda bound-var body)))
+  
+(define lambda-exp?
+  (lambda (exp)
+    (and 
+     (list? exp) 
+     (and
+      (eq? (length exp) 3)
+      (and
+       (eqv? (car exp) 'lambda)
+       (symbol? (cadr exp)))))))
+
+(define lambda-exp->bound-var
+  (lambda (exp) (cadr exp)))
+\end{lstlisting}
+
+All procedures not listed in this code have remained the same from exercise 2.15.
+
 \newpage
 
 \section{Racket (Scheme) Language Reference}
