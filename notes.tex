@@ -11,6 +11,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{textcomp}
+\usepackage{enumitem}
 
 \lstset{
     language=Scheme,
@@ -726,6 +727,104 @@ The procedure |path| returns a list of |'left| and |'right| symbols to indicate 
                   (path n (caddr bst)))
                  '())))))
 \end{lstlisting}
+
+\newpage
+
+\section{Exams}
+
+\subsection{January 23rd 2016}
+
+\subsubsection{Question 1}
+
+Consider the following PROC programs:
+
+\begin{lstlisting}[language={CPL}]
+let f = proc(x) 1 in
+    let f = proc(y) if zero? y then 0 else (f (y-1)) in
+        (f 2)
+\end{lstlisting}
+
+\begin{lstlisting}[language={CPL}]
+let g = let x = 1 in proc(f) (f 0) in
+    let x = 2 in (g   proc(y) x)
+\end{lstlisting}
+
+\begin{enumerate}[label=\Alph*]
+\item To what values do these programs evaluate?
+\item To what value would they evaluate when PROC uses dynamic scoping instead of static scoping?
+\item Write a PROC program p such that p evaluates to the constant function that maps any integer to 0, and such that p would evaluate under dynamic scoping to the function that doubles its integer argument.
+\end{enumerate}
+
+\subsubsection*{Answer}
+
+\begin{enumerate}[label=\Alph*]
+\item 1 and 2
+\item 0 and 1
+\item
+\begin{lstlisting}[language={CPL}]
+let y = 5 in
+    let g = let h = proc(x) (2 * x) in proc(f) (f y) in
+        let h = proc(x) 0 in (g   proc(v) (h v))
+\end{lstlisting}
+\end{enumerate}
+
+\subsubsection{Question 2}
+
+Extend the IMPLICIT-REFS language with an address-of operator (\&) that can be applied to variables only. The expression \&v returns the location of variable v in the store. Also extend the language with setref and deref expressions such that these locations can be used. These extensions make it possible to simulate call-by-reference in IMPLICIT-REFS.
+
+For instance, the following program in the extended language should return the value 1:
+
+\begin{lstlisting}[language={CPL}]
+let a = 3 in
+  let b = 4 in
+    let swap = proc(x) proc(y)
+        let temp = deref x in
+          begin setref(x, deref y); setref(y, temp) end
+    in begin ((swap &a) &b); (a-b) end
+\end{lstlisting}
+
+Extend the interpreter of IMPLICIT-REFS:
+\begin{enumerate}[label=\Alph*]
+\item How should the datatype of expressions be extended?
+\item How should the datatype of expressed values be extended?
+\item Write the additional cases that need to be added to the value-of function.
+\end{enumerate}
+
+\subsubsection*{Answer}
+
+\begin{enumerate}[label=\Alph*]
+\item We add the following code:
+\begin{lstlisting}[language={CPL}]
+  (deref-exp
+   (exp1 expression?))  
+  (setref-exp
+   (exp1 expression?)
+   (exp2 expression?))
+  (addr-exp (var symbol?))
+\end{lstlisting}
+\item We add the following code:
+\begin{lstlisting}[language={CPL}]
+  (ref-val
+   (ref reference?))
+\end{lstlisting}
+\item We add the following code:
+\begin{lstlisting}[language={CPL}]
+      (deref-exp (exp1)
+        (let ((v1 (value-of exp1 env)))
+          (let ((ref1 (expval->ref v1)))
+            (deref ref1))))
+
+      (setref-exp (exp1 exp2)
+        (let ((ref (expval->ref (value-of exp1 env))))
+          (let ((v2 (value-of exp2 env)))
+            (begin
+              (setref! ref v2)
+              (num-val 23)))))
+
+      (addr-exp (var)
+        (ref-val (apply-env env var)))
+\end{lstlisting}
+\end{enumerate}
 
 \newpage
 
