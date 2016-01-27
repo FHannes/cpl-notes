@@ -11,6 +11,7 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{textcomp}
+\usepackage{qrcode}
 \usepackage{enumitem}
 
 \lstset{
@@ -46,14 +47,25 @@
             \end{center}
         \end{minipage}
     \end{center}
-    \vfill
-    \hfill\makebox[8.5cm][l]{%
-        \vbox to 7cm{\vfill\noindent
-            {\rm \textbf{Fr\'ed\'eric Hannes}}\\[2mm]
-            {\rm Academic year 2015--2016}
-        }
-    }
+    \vfill\vspace*{5cm}
+    \begin{minipage}[t]{0.2\textwidth}
+        \begin{center}
+            @GitHub\\
+            \qrcode{https://github.com/FHannes/cpl-notes}\\
+            {\tt \#\input{rev}}
+        \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.3\textwidth}
+        \vfill\noindent \\[5mm]
+        {\rm \textbf{Fr\'ed\'eric Hannes}}\\[2mm]
+        {\rm Academic year 2015--2016}
+    \end{minipage}
 \end{titlepage}
+
+%\setcounter{secnumdepth}{4}
+%\setcounter{tocdepth}{4}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{}\\}
 
 \tableofcontents
 
@@ -61,13 +73,15 @@
 
 \section{Info}
 
-This document contains my notes for the course Comparative Programming Languages. It features code examples from the textbook used in the course, with some or a lot of explanation, depending on the complexity of the examples. I try to implement these myself first, if my implementation differs greatly from that of the textbook, I also add it to this document with an explanation of what I could've done better. After these examples, exercises and a modest Racket language reference guide are also present.
+This document contains my notes for the course Comparative Programming Languages. It features code examples from the textbook used in the course, with some or a lot of explanation, depending on the complexity of the examples. I try to implement these myself first, if my implementation differs greatly from that of the textbook, I also add it to this document with an explanation of what I could've done better. After these you will also find examples, exercises and a modest Racket language reference guide.
 
 \newpage
 
 \section{Code}
 
-\subsection{in-S?}
+\subsection{Chapter 1}
+
+\subsubsection{in-S?}
 
 The set $S$ is defined as a set containing any natural number $n$ where $n = 0$ or $n - 3 \in S$. The procedure |in-S?| returns |#t| if a given value is part of the set $S$ and |#f| if it is not.
 
@@ -79,7 +93,7 @@ The set $S$ is defined as a set containing any natural number $n$ where $n = 0$ 
             (in-S? (- x 3))))))
 \end{lstlisting}
 
-\subsection{list-length}
+\subsubsection{list-length}
 
 The procedure |list-length| returns the number of elements in a given list. This functionality is available as |length| in the Racket API.
 
@@ -92,17 +106,9 @@ The procedure |list-length| returns the number of elements in a given list. This
         (+ 1 (list-length (cdr lst))))))
 \end{lstlisting}
 
-\subsection{nth-element}
+\subsubsection{nth-element}
 
 The procedure |nth-element| returns the element from a given list at a given position. This functionality is available as |list-ref| in the Racket API.
-
-\textbf{report-list-too-short} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ Error}
-\begin{lstlisting}[aboveskip=0pt]
-(define report-list-too-short
-  (lambda (n)
-    (eopl:error 'nth-element
-                "List too short by ~s elements.~%" (+ n 1))))
-\end{lstlisting}
 
 \textbf{nth-element} : \textit{Listof(Sym) $\times$ Int $\rightarrow$ SchemeVal}
 \begin{lstlisting}[aboveskip=0pt]
@@ -113,9 +119,14 @@ The procedure |nth-element| returns the element from a given list at a given pos
         (if (zero? n)
             (car lst)
             (nth-element (cdr lst) (- n 1))))))
+            
+(define report-list-too-short
+  (lambda (n)
+    (eopl:error 'nth-element
+                "List too short by ~s elements.~%" (+ n 1))))
 \end{lstlisting}
 
-\subsection{remove-first}
+\subsubsection{remove-first}
 
 The procedure |remove-first| returns a given list without the first occurrence of a given symbol. If the list is empty, an empty list is returned. If the list does not contain the given symbol, the given list is returned. This functionality is available as |remv| in the Racket API.
 
@@ -130,7 +141,7 @@ The procedure |remove-first| returns a given list without the first occurrence o
             (cons (car los) (remove-first s (cdr los)))))))
 \end{lstlisting}
 
-\subsection{occurs-free?}
+\subsubsection{occurs-free?}
 
 The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and returns |#t| if a given variable is not a bound variable in that expression. This means that it does not occur as a named parameter for any of the |lambda| expressions in the given expression.
 
@@ -150,7 +161,7 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
         (occurs-free? var (cadr exp)))))))
 \end{lstlisting}
 
-\subsubsection*{Lines reference}
+\subsubsubsection{Lines reference}
 
 \begin{enumerate}
 \setcounter{enumi}{3}
@@ -164,11 +175,11 @@ The procedure |occurs-free?| evaluates a $\lambda$-calculus expression and retur
 \item To grab the second value of the pair, we have to first get the list of expressions symbols that does not contain the initial symbol, which we've already evaluated using |cdr| and next get the first (and only) symbol of that list using |car|. This line is only executed, if the previous line did not evaluate to |#t|.
 \end{enumerate}
 
-\subsection{subst}
+\subsubsection{subst}
 
 The procedure |subst| takes 2 symbols and an s-list, which is defined as a list containing symbols and/or s-lists. The procedure should replace every occurrence of one of the given symbols in the list and all nested lists by the other given symbol, referred to as |old| and |new| respectively.
 
-\subsubsection*{First attempt}
+\subsubsubsection{First attempt}
 
 \textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
 \begin{lstlisting}[aboveskip=0pt]
@@ -185,7 +196,7 @@ The procedure |subst| takes 2 symbols and an s-list, which is defined as a list 
 
 My first attempt can be improved by extracting the |cons| call from both expressions passed to the second |if| call, as the second expression in each |cons| call is the same.
 
-\subsubsection*{Textbook}
+\subsubsubsection{Textbook}
 
 \textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-exp $\rightarrow$ S-exp}
 \begin{lstlisting}[aboveskip=0pt]
@@ -196,7 +207,7 @@ My first attempt can be improved by extracting the |cons| call from both express
         (subst new old sexp))))
 \end{lstlisting}
 
-\textbf{subst} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
+\textbf{subst-in-s-exp} : \textit{Sym $\times$ Sym $\times$ S-list $\rightarrow$ S-list}
 \begin{lstlisting}[aboveskip=0pt]
 (define subst
   (lambda (new old slist)
@@ -209,15 +220,97 @@ My first attempt can be improved by extracting the |cons| call from both express
 
 \newpage
 
+\subsection{Chapter 2}
+
+\subsubsection{Environment data-structure}
+\label{sec:env}
+
+The following code represents the data-structure for an environment. |empty-env| creates a new empty environment. |extend-env| extends an environment by assigning a given value to a given variable name in a given environment. |apply-env| returns the value assigned to a given variable in a given environment.
+
+\textbf{empty-env} : \textit{() $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define empty-env
+  (lambda ()
+    (list 'empty-env)))
+\end{lstlisting}
+
+\textbf{extend-env} : \textit{Var $\times$ SchemeVal $\times$ Env $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define extend-env
+  (lambda (var val env)
+    (list 'extend-env var val env)))
+\end{lstlisting}
+
+\textbf{apply-env} : \textit{Env $\times$ Var $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((eqv? (car env) 'empty-env)
+       (report-no-binding-found search-var))
+      ((eqv? (car env) 'extend-env)
+       (let ((saved-var (cadr env))
+             (saved-val (caddr env))
+             (saved-env (cadddr env)))
+         (if (eqv? search-var saved-var)
+             saved-val
+             (apply-env saved-env search-var))))
+      (else (report-invalid-env)))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (eopl:error 'apply-env "No binding for ~s" search-var)))
+
+(define report-invalid-env
+  (lambda (env)
+    (eopl:error 'apply-env "Bad environment: ~s" env)))
+\end{lstlisting}
+
+\subsubsection{Procedural environment}
+\label{sec:proc_env}
+
+The following code is a procedural representation of the environment data)structure introduced in section \ref{sec:env}. The environment is defined as a procedure that takes a |search-var| argument to find the value bound to a variable, if there is one in the environment. |apply-env| is still used as a wrapper around this functionality to provire an interface consistant with the original list-based definition.
+
+\textbf{empty-env} : \textit{() $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define empty-env
+  (lambda ()
+    (lambda (search-var)
+      (report-no-binding-found search-var))))
+
+(define report-no-binding-found
+  (lambda (search-var)
+    (eopl:error 'apply-env "No binding for ~s" search-var)))
+\end{lstlisting}
+
+\textbf{extend-env} : \textit{Var $\times$ SchemeVal $\times$ Env $\rightarrow$ Env}
+\begin{lstlisting}[aboveskip=0pt]
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (lambda (search-var)
+      (if (eqv? search-var saved-var)
+          saved-val
+          (apply-env saved-env search-var)))))
+\end{lstlisting}
+
+\textbf{apply-env} : \textit{Env $\times$ Var $\rightarrow$ SchemeVal}
+\begin{lstlisting}[aboveskip=0pt]
+(define apply-env
+  (lambda (env search-var)
+    (env search-var)))
+\end{lstlisting}
+
+\newpage
+
 \section{Exercises}
 
 \subsection{Chapter 1}
 
-\subsubsection*{1.6}
+\subsubsection{Exercise 1.6}
 
 If we reversed the order of checks in |nth-element|, nothing would go wrong, but we would have to perform the initial check in both branches of the |if| for the second check.
 
-\subsubsection*{1.7}
+\subsubsection{Exercise 1.7}
 
 We introduce a helper procedure |nth-element-helper| to easily preserve the original given list.
 
@@ -240,14 +333,14 @@ We introduce a helper procedure |nth-element-helper| to easily preserve the orig
     (nth-element-helper lst lst n)))
 \end{lstlisting}
 
-\subsubsection*{1.8}
+\subsubsection{Exercise 1.8}
 
 If the last line of |remove-first| were to be replaced with |(remove-first s (cdr los))|, it would be defined as:
 
 \textbf{remote-first} : \textit{Sym $\times$ Listof(Sym) $\rightarrow$ Listof(Sym)}\\
 \textbf{usage:} |(remove-first s los)| returns a list with all elements starting after the first occurrence of the symbol |s| in the list |los|.
 
-\subsubsection*{1.9}
+\subsubsection{Exercise 1.9}
 
 We define |remove| as a procedure which removes every occurrence of a given symbol from a given list.
 
@@ -261,17 +354,17 @@ We define |remove| as a procedure which removes every occurrence of a given symb
             (cons (car l) (remove s (cdr l)))))))
 \end{lstlisting}
 
-\subsubsection*{1.10}
+\subsubsection{Exercise 1.10}
 
 Though typically ``or'' refers to ``inclusive or'', ``exclusive or'' also exists. The statement ``A or B'' for the inclusive variant, will evaluate to true (if it is a logical expression) when either A and/or B are true. The exclusive variant, often referred to as ``xor'', will for ``A xor B'' only evaluate to true if A or B are true, but not when both are true or false.
 
 \subparagraph{NOTE} When we refer to bitwise operations, rather than logical ones, ``A or B'' will perform the same logic as it would for a logical expression, at the binary level. E.g. ``1001 or 0101'' evaluates to 1101, which translates to the decimal system as ``9 or 5 = 13''. ``1001 xor 0101'' evaluates to 1100, which translates to the decimal system as ``9 xor 5 = 12''.
 
-\subsubsection*{1.11}
+\subsubsection{Exercise 1.11}
 
 The |subst-in-s-exp| procedure is called with the first element of the parameter |slist| in |subst|, it only passes this back to |subst| if it is not a symbol. This means it works down into the tree of nested lists. Once the deepest nested list has been reached, recursion will automatically halt.
 
-\subsubsection*{1.12}
+\subsubsection{Exercise 1.12}
 
 The procedure |subst| defined below has |subst-in-s-exp| inlined.
 
@@ -287,7 +380,7 @@ The procedure |subst| defined below has |subst-in-s-exp| inlined.
          (subst new old (cdr slist))))))
 \end{lstlisting}
 
-\subsubsection*{1.13}
+\subsubsection{Exercise 1.13}
 
 The procedure |map| is used to process the slist in the altered version of |subst|.
 
@@ -300,7 +393,7 @@ The procedure |map| is used to process the slist in the altered version of |subs
                (subst new old sexp))) slist)))
 \end{lstlisting}
 
-\subsubsection*{1.15}
+\subsubsection{Exercise 1.15}
 
 The procedure |duple| returns a list with an input value duplicated a certain number of times.
 
@@ -312,7 +405,7 @@ The procedure |duple| returns a list with an input value duplicated a certain nu
         (cons x (duple (- n 1) x)))))
 \end{lstlisting}
 
-\subsubsection*{1.16}
+\subsubsection{Exercise 1.16}
 
 The procedure |invert| swaps the elements of every pair in a list of pairs.
 
@@ -326,7 +419,7 @@ The procedure |invert| swaps the elements of every pair in a list of pairs.
          (invert (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{1.17}
+\subsubsection{Exercise 1.17}
 
 The procedure |down| wraps every top-level element of a given list in a list.
 
@@ -340,7 +433,7 @@ The procedure |down| wraps every top-level element of a given list in a list.
          (down (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{1.18}
+\subsubsection{Exercise 1.18}
 
 The procedure |swapper| swaps every given 2 symbols in a given list and its nested lists.
 
@@ -357,7 +450,7 @@ The procedure |swapper| swaps every given 2 symbols in a given list and its nest
      slist)))
 \end{lstlisting}
 
-\subsubsection*{1.19}
+\subsubsection{Exercise 1.19}
 
 The procedure |list-set| replaces the element at a certain given zero-offset position in a list by a different one.
 
@@ -373,7 +466,7 @@ The procedure |list-set| replaces the element at a certain given zero-offset pos
          (list-set (cdr lst) (- n 1) x)))))
 \end{lstlisting}
 
-\subsubsection*{1.20}
+\subsubsection{Exercise 1.20}
 
 The procedure |count-occurrences| counts the amount of times that a given symbol is rpesent in a given list or any nested list in that list.
 
@@ -389,7 +482,7 @@ The procedure |count-occurrences| counts the amount of times that a given symbol
          (count-occurrences s (cdr slist))))))
 \end{lstlisting}
 
-\subsubsection*{1.21}
+\subsubsection{Exercise 1.21}
 
 The procedure |product| returns a list of pairs which represent the Cartesian product of two given lists.
 
@@ -421,7 +514,7 @@ The procedure |product| returns a list of pairs which represent the Cartesian pr
          (product (cdr sos1) sos2)))))
 \end{lstlisting}
 
-\subsubsection*{1.22}
+\subsubsection{Exercise 1.22}
 
 The procedure |filter-in| returns a list containing only the top-level elements of a given list for which a given predicate evaluates to |#t|.
 
@@ -437,7 +530,7 @@ The procedure |filter-in| returns a list containing only the top-level elements 
             (filter-in pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{1.23}
+\subsubsection{Exercise 1.23}
 
 The procedure |list-index| returns the position of the first element of a given list for which a given predicate returns |#t|. If the predicate is false for every element of the list, the procedure returns |#f|.
 
@@ -459,7 +552,7 @@ The procedure |list-index| returns the position of the first element of a given 
              1)))))
 \end{lstlisting}
 
-\subsubsection*{1.24}
+\subsubsection{Exercise 1.24}
 
 The procedure |every?| returns |#t| if every element of a given list evaluates to |#t| for a given predicate and |#f| if it does not.
 
@@ -473,7 +566,7 @@ The procedure |every?| returns |#t| if every element of a given list evaluates t
          (every? pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{1.25}
+\subsubsection{Exercise 1.25}
 
 The procedure |exists?| returns |#t| if at least one element of a given list evaluates to |#t| for a given predicate and |#f| if none do.
 
@@ -487,19 +580,11 @@ The procedure |exists?| returns |#t| if at least one element of a given list eva
          (exists? pred (cdr lst))))))
 \end{lstlisting}
 
-\subsubsection*{1.26}
+\subsubsection{Exercise 1.26}
 
 The procedure |up| removes the parenthesis for every top-level list in a given list.
 
 \begin{lstlisting}
-(define prepend
-  (lambda (lst1 lst2)
-    (if (null? lst1)
-        lst2
-        (cons
-         (car lst1)
-         (prepend (cdr lst1) lst2)))))
-
 (define up
   (lambda (lst)
     (if (null? lst)
@@ -513,19 +598,13 @@ The procedure |up| removes the parenthesis for every top-level list in a given l
              (up (cdr lst)))))))
 \end{lstlisting}
 
-\subsubsection*{1.27}
+|prepend| is defined in exercise 1.21.
+
+\subsubsection{Exercise 1.27}
 
 The procedure |flatten| removes the parenthesis for every list and nested list in a given list.
 
 \begin{lstlisting}
-(define prepend
-  (lambda (lst1 lst2)
-    (if (null? lst1)
-        lst2
-        (cons
-         (car lst1)
-         (prepend (cdr lst1) lst2)))))
-
 (define flatten
   (lambda (lst)
     (if (null? lst)
@@ -539,7 +618,9 @@ The procedure |flatten| removes the parenthesis for every list and nested list i
              (flatten (cdr lst)))))))
 \end{lstlisting}
 
-\subsubsection*{1.28}
+|prepend| is defined in exercise 1.21.
+
+\subsubsection{Exercise 1.28}
 
 The procedure |merge| takes two ordered lists of numbers and merges them into a single ordered list.
 
@@ -556,7 +637,7 @@ The procedure |merge| takes two ordered lists of numbers and merges them into a 
            (cons (car loi2) (merge loi1 (cdr loi2))))))))
 \end{lstlisting}
 
-\subsubsection*{1.29}
+\subsubsection{Exercise 1.29}
 
 The procedure |sort| takes a list of numbers and sorts them from small to large.
 
@@ -586,7 +667,7 @@ The procedure |sort| takes a list of numbers and sorts them from small to large.
          (sort (remove-first (smallest loi) loi))))))
 \end{lstlisting}
 
-\subsubsection*{1.30}
+\subsubsection{Exercise 1.30}
 
 The procedure |sort/predicate| takes a list of numbers and sorts them based on a given predicate.
 
@@ -599,14 +680,6 @@ The procedure |sort/predicate| takes a list of numbers and sorts them based on a
             (car loi)
             (select pred (cdr loi))))))
 
-(define remove-first
-  (lambda (s los)
-    (if (null? los)
-        '()
-        (if (eqv? (car los) s)
-            (cdr los)
-            (cons (car los) (remove-first s (cdr los)))))))
-
 (define sort/predicate
   (lambda (pred loi)
     (if (null? loi)
@@ -616,7 +689,9 @@ The procedure |sort/predicate| takes a list of numbers and sorts them based on a
          (sort/predicate pred (remove-first (select pred loi) loi))))))
 \end{lstlisting}
 
-\subsubsection*{1.31}
+|remove-first| is defined in exercise 1.29.
+
+\subsubsection{Exercise 1.31}
 
 The procedure |leaf| creates the representation of a leaf in a binary tree. |interior-node| creates a named node with 2 leafs linked to it. |leaf?| returns |#t| if a given value is a leaf. |lson| returns the left leaf/subnode of a node and |rson| the right one. |contents-of| returns the value of a bintree item, which is the value of a leaf or the name of a node.
 
@@ -648,27 +723,24 @@ The procedure |leaf| creates the representation of a leaf in a binary tree. |int
         (car bintree))))
 \end{lstlisting}
 
-\subsubsection*{1.32}
+\subsubsection{Exercise 1.32}
 
 The procedure |double-tree| doubles the value of each leaf in a tree.
 
 \begin{lstlisting}
-(define leaf?
-  (lambda (v)
-   (number? v)))
-
 (define double-tree
   (lambda (bintree)
     (if (leaf? bintree)
-        (* 2 bintree)
-        (cons
-         (car bintree)
-         (list
-          (double-tree (cadr bintree))
-          (double-tree (caddr bintree)))))))
+        (leaf (* 2 bintree))
+        (interior-node
+         (contents-of bintree)
+         (double-tree (lson bintree))
+         (double-tree (rson bintree))))))
 \end{lstlisting}
 
-\subsubsection*{1.33}
+|leaf|, |leaf?|, |interior-node|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
+
+\subsubsection{Exercise 1.33}
 
 The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion a given binary tree with the number of times the symbol |'red| is found in a parent node.
 
@@ -676,29 +748,30 @@ The procedure |mark-leaves-with-red-depth| replaces the value of every leaf ion 
 (define mark-leaves-depth
   (lambda (bintree s depth)
     (if (leaf? bintree)
-        depth
-        (cons
-         (car bintree)
-         (list
-          (mark-leaves-depth
-           (cadr bintree)
-           s
-           (if (eqv? s (car bintree))
-               (+ 1 depth)
-               depth))
-          (mark-leaves-depth
-           (caddr bintree)
-           s
-           (if (eqv? s (car bintree))
-               (+ 1 depth)
-               depth)))))))
+        (leaf depth)
+        (interior-node
+         (contents-of bintree)
+         (mark-leaves-depth
+          (lson bintree)
+          s
+          (if (eqv? s (contents-of bintree))
+              (+ 1 depth)
+              depth))
+         (mark-leaves-depth
+          (rson bintree)
+          s
+          (if (eqv? s (contents-of bintree))
+              (+ 1 depth)
+              depth))))))
 
 (define mark-leaves-with-red-depth
   (lambda (bintree)
     (mark-leaves-depth bintree 'red 0)))
 \end{lstlisting}
 
-\subsubsection*{1.34}
+|leaf|, |leaf?|, |interior-node|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
+
+\subsubsection{Exercise 1.34}
 
 The procedure |path| returns a list of |'left| and |'right| symbols to indicate a path to where a given value can be found in a binary search tree.
 
@@ -727,6 +800,513 @@ The procedure |path| returns a list of |'left| and |'right| symbols to indicate 
                   (path n (caddr bst)))
                  '())))))
 \end{lstlisting}
+
+\subsubsection{Exercise 1.35}
+
+The procedure |number-leaves| takes a given bintree and returns a tree with the same structure where the leaves have been replaced with their count from 0 to n-1, starting from the left-most leaf going to the right-most leaf in the tree.
+
+\begin{lstlisting}
+(define count-leaves
+ (lambda (bintree)
+   (if (leaf? bintree)
+       1
+       (+
+        (count-leaves (lson bintree))
+        (count-leaves (rson bintree))))))
+
+(define number-bintree
+  (lambda (bintree n)
+    (if (leaf? bintree)
+        (leaf n)
+        (interior-node
+         (contents-of bintree)
+         (number-bintree (lson bintree) n)
+         (number-bintree (rson bintree) (+ n (count-leaves (lson bintree))))))))
+
+(define number-leaves
+  (lambda (bintree)
+    (number-bintree bintree 0)))
+\end{lstlisting}
+
+|leaf|, |interior-node|, |leaf?|, |lson|, |rson| and |contents-of| are defined in exercise 1.31.
+
+\subsubsection{Exercise 1.36}
+
+The procedure |number-elements| takes a list of elements and returns a list of pairs, where every pair is the index of an element from the original list, paired with the element itself.
+
+\begin{lstlisting}
+(define f
+  (lambda (lst rlst n)
+    (cons
+     (list
+      (+ (car lst) n)
+      (cadr lst))
+     (if (null? rlst)
+         '()
+         (f
+          (car rlst)
+          (cdr rlst)
+          1)))))
+
+(define g
+  (lambda (lst rlst)
+    (f lst rlst 0)))
+
+(define number-elements
+  (lambda (lst)
+    (if (null? lst) '()
+        (g (list 0 (car lst)) (number-elements (cdr lst))))))
+\end{lstlisting}
+
+\newpage
+
+\subsection{Chapter 2}
+
+\subsubsection{Exercise 2.1}
+
+The procedure |factorial| takes a base and a number is bigits for that base, for which it will determine the factorial for that number in bigits for that same base. The base operations for the bigits datatype are defined as |zero|, |is-zero?|, |successor| and |predecessor|. To build |factorial|, the mathematical operations |plus| and |times| have also been defined.
+
+As the base gets larger, the time required to compute the |factorial| decreases. This can be explained by the fact that less bigits will be required to represent larger numbers, which means that there have to be less recursive |successor| and |predecessor| calls made to calculate the result.
+
+\begin{lstlisting}
+(define zero (lambda () '()))
+
+(define is-zero? (lambda (bigits) (null? bigits)))
+
+(define successor
+  (lambda (N bigits)
+    (if (is-zero? bigits)
+        '(1)
+        (if (eq? (car bigits) (- N 1))
+            (cons 0 (successor N (cdr bigits)))
+            (cons (+ 1 (car bigits)) (cdr bigits))))))
+
+(define predecessor
+  (lambda (N bigits)
+    (if (eq? (car bigits) 0)
+        (cons (- N 1) (predecessor N (cdr bigits)))
+        (if (and
+             (eq? (- (car bigits) 1) 0)
+             (null? (cdr bigits)))
+            (zero)
+            (cons (- (car bigits) 1) (cdr bigits))))))
+
+(define plus
+  (lambda (N bigits1 bigits2)
+    (if (is-zero? bigits2)
+        bigits1
+        (plus N (successor N bigits1) (predecessor N bigits2)))))
+
+(define times
+  (lambda (N bigits1 bigits2)
+    (if (is-zero? bigits2)
+        (zero)
+        (plus N bigits1 (times N bigits1 (predecessor N bigits2))))))
+
+(define factorial
+  (lambda (N bigits)
+    (if (is-zero? bigits)
+        '(1)
+        (times N bigits (factorial N (predecessor N bigits))))))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.4}
+
+The procedure |empty-stack| returns an empty stack. |push| adds a given element to the top of a given stack. |pop| removes an element from the top of a given stack. |top| returns the element at the top of a given stack. |empty-stack?| returns |#t| if a stack is empty.
+
+|empty-stack|, |push| an |pop| are constructors, as they create or modify a given stack. |top| and |empty-stack?| are observers as they only retrieve data from a given stack.
+
+\begin{lstlisting}
+(define empty-stack (lambda () '()))
+
+(define push
+  (lambda (val stack)
+    (if (list? stack)
+        (cons val stack)
+        (eopl:error 'push "Invalid stack"))))
+
+(define pop
+  (lambda (stack)
+    (cond
+      ((empty-stack? stack) (eopl:error 'pop "Stack is empty"))
+      ((list? stack) (cdr stack))
+      (else (eopl:error 'pop "Invalid stack")))))
+
+(define top
+  (lambda (stack)
+    (cond
+      ((empty-stack? stack) (eopl:error 'top "Stack is empty"))
+      ((list? stack) (car stack))
+      (else (eopl:error 'top "Invalid stack")))))
+    
+(define empty-stack?
+  (lambda (stack)
+    (null? stack)))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.5}
+
+The procedure |empty-env|, |extend-env| and |apply-env| procedures represent an environment as an association list (a-list), with the empty environment as an empty list.
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (list (list var val) env)))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (pair? env) (pair? (car env))) (list? (cadr env)))
+       (if (eqv? (caar env) search-var)
+           (cadar env)
+           (apply-env (cadr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.6}
+
+A first alternate representation is a linked list, as seen in exercise 2.5. An alternative to the a-list is a list of pairs:
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (cons (list var val) env)))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (list? env) (pair? (car env))) (list? (cdr env)))
+       (if (eqv? (caar env) search-var)
+           (cadar env)
+           (apply-env (cdr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+Another alternative is a sequential listing of variables and values, which are not specifically grouped, just listed in sequence:
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (cons var (cons val env))))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (list? env) (symbol? (car env))) (not (null? (cdr env))))
+       (if (eqv? (car env) search-var)
+           (cadr env)
+           (apply-env (cddr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.8}
+
+The procedure |empty-env?| returns |#t| if a given environment is empty. This procedure works for the original interface defined in section \ref{sec:env}, as well as those defined in exercises 2.5 and 2.6.
+
+\begin{lstlisting}
+(define empty-env?
+  (lambda (env)
+    (equal? env (empty-env))))
+\end{lstlisting}
+
+|empty-env| is defined in the sections and exercises mentioned above the code.
+
+\subsubsection{Exercise 2.9}
+
+The procedure |has-binding?| returns |#t| if a given environment contains a binding for a given variable. The following implementation works with the interface defined in section \ref{sec:env}.
+
+\begin{lstlisting}
+(define has-binding?
+  (lambda (env search-var)
+    (cond
+      ((eqv? (car env) 'empty-env) #f)
+      ((eqv? (car env) 'extend-env)
+       (let ((saved-var (cadr env))
+             (saved-val (caddr env))
+             (saved-env (cadddr env)))
+         (or (eqv? search-var saved-var)
+             (has-binding? saved-env search-var))))
+      (else (report-invalid-env)))))
+\end{lstlisting}
+
+An alternative implementation for a-lists used in exercise 2.5 can also be defined.
+
+\begin{lstlisting}
+(define has-binding?
+  (lambda (env search-var)
+    (cond
+      ((null? env) #f)
+      ((and (and (list? env) (pair? (car env))) (list? (cdr env)))
+       (or (eqv? (caar env) search-var)
+           (has-binding? (cdr env) search-var)))
+      (else (report-invalid-env env)))))
+\end{lstlisting}
+
+|report-invalid-env| is defined in the code in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.10}
+
+The procedure |extend-env*| extends a given environment with a given list of variables and a given list of their respective values. The procedure defined below is intended for use with the a-list interface defined in exercise 2.5.
+
+\begin{lstlisting}
+(define extend-env*
+  (lambda (vars vals env)
+    (if (or (null? vars) (null? vals))
+            env
+            (list
+             (list
+              (car vars)
+              (car vals))
+             (extend-env* (cdr vars) (cdr vals) env)))))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.11}
+
+The procedure |extend-env*| extends a given environment with a given list of variables and a given list of their respective values. This particular implementation uses a backbone structure to perform the operation of extending the environment in constant time. The rest of the interface for the environment based on a backbone structure has also been provided as |empty-env|, |extend-env| and |apply-env|.
+
+\begin{lstlisting}
+(define empty-env (lambda () '()))
+
+(define extend-env
+  (lambda (var val env)
+    (list (list (list var) (list val)) env)))
+
+(define find-env-value
+  (lambda (vars vals search-var)
+    (if (or (null? vars) (null? vals))
+        #f
+        (if (eqv? (car vars) search-var)
+            (car vals)
+            (find-env-value (cdr vars) (cdr vals) search-var)))))
+
+(define apply-env
+  (lambda (env search-var)
+    (cond
+      ((null? env) (report-no-binding-found search-var))
+      ((and (and (and (and (pair? env) (pair? (car env)))(list? (caar env)))
+                 (list? (cadar env))) (list? (cadr env)))
+       (let ([val (find-env-value (caar env) (cadar env) search-var)])
+         (if (eq? val #f)
+             (apply-env (cadr env) search-var)
+             val)))
+      (else (report-invalid-env env)))))
+      
+(define extend-env*
+  (lambda (vars vals env)
+    (if (or (null? vars) (null? vals))
+            env
+            (list (list vars vals) env))))
+\end{lstlisting}
+
+|report-no-binding-found| and |report-invalid-env| are defined in the code for environments in section \ref{sec:env}.
+
+\subsubsection{Exercise 2.12}
+
+The follow code represents a stack implementation as seen in exercise 2.4, using a procedural representation. The stack, which is initialized with the |empty-stack| procedure is a procedure itself. This procedure is extended by |push| and only takes a single argument, which defines the action that is being performed on the stack. |'top| returns the top element of the stack. |'pop| removes the top element from the stack, which means that the stack is return as it was before the last push call. Finally, |'empty| returns |#t| if the stack is empty and |#f| if it is not. These actions are never performed on the stack directly, but are neatly wrapped in the procedures |pop|, |top| and |empty-stack?| as they were defined in exercise 2.4.
+
+\begin{lstlisting}
+(define empty-stack 
+  (lambda () 
+    (lambda (action)
+      (if (eq? action 'empty) #t (eopl:error action "Invalid stack")))))
+
+(define push
+   (lambda (val stack)
+     (lambda (action)
+       (cond
+         ((eq? action 'top) val)
+         ((eq? action 'pop) stack)
+         ((eq? action 'empty) #f)))))
+
+(define pop
+   (lambda (stack)
+      (stack 'pop)))
+
+(define top
+   (lambda (stack)
+      (stack 'top)))
+
+(define empty-stack?
+   (lambda (stack)
+      (stack 'empty)))
+\end{lstlisting}
+
+An alternative implementation can define the stack as a list of the three operations |pop|, |top| and |empty-stack?|, by storing procedures for each operation in the list.
+
+\begin{lstlisting}
+(define empty-stack 
+  (lambda () 
+    (list
+     (lambda () (eopl:error 'stack "Invalid stack"))
+     (lambda () (eopl:error 'stack "Invalid stack"))
+     (lambda () #t))))
+
+(define push
+   (lambda (val stack)
+     (list
+      (lambda () val)
+      (lambda () stack)
+      (lambda () #f))))
+
+(define pop
+   (lambda (stack)
+      ((cadr stack))))
+
+(define top
+   (lambda (stack)
+      ((car stack))))
+
+(define empty-stack?
+   (lambda (stack)
+      ((caddr stack))))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.13}
+
+The follow code is an extension to the procedural environment representation seen in section \ref{sec:proc_env}. The environment is represented as a list of two procedure, of which the first is the equivalent of |apply-env| and the second of |empty-env?|. These procedures also exist as wrappers to provide a clean interface to the environment.
+
+\begin{lstlisting}
+(define empty-env
+  (lambda ()
+    (list
+     (lambda (search-var) (report-no-binding-found search-var))
+     (lambda () #t))))
+
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (list
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           saved-val
+           (apply-env saved-env search-var)))
+     (lambda () #f))))
+
+(define apply-env
+  (lambda (env search-var) ((car env) search-var)))
+
+(define empty-env?
+  (lambda (env) ((cadr env))))
+\end{lstlisting}
+
+|report-no-binding-found| is defined in the code for environments in section \ref{sec:proc_env}.
+
+\subsubsection{Exercise 2.14}
+
+The follow code is an extension to the procedural environment defined in exercise 2.13, which adds a third procedure to the list that represents the environment, which returns |#t| if a given variable has a binding. This is wrapped by the added procedure |has-binding?|.
+
+\begin{lstlisting}
+(define empty-env
+  (lambda ()
+    (list
+     (lambda (search-var) (report-no-binding-found search-var))
+     (lambda () #t)
+     (lambda (search-var) #f))))
+
+(define extend-env
+  (lambda (saved-var saved-val saved-env)
+    (list
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           saved-val
+           (apply-env saved-env search-var)))
+     (lambda () #f)
+     (lambda (search-var)
+       (if (eqv? search-var saved-var)
+           #t
+           (has-binding? saved-env search-var))))))
+
+(define has-binding?
+  (lambda (env search-var) ((caddr env) search-var)))
+\end{lstlisting}
+
+|report-no-binding-found| is defined in the code for environments in section \ref{sec:proc_env}. The |apply-env| and |empty-env?| procedures from exercise 2.13 remain the same for this new environment.
+
+\subsubsection{Exercise 2.15}
+
+The follow code is $\lambda$-calculus expression interface consisting out of various procedures. |var-exp| generates a variable expression, |lambda-exp| a lambda-expression and |app-exp| an application expression. The proceures |var-exp?|, |lambda-exp?| and |app-exp?| respectively validate if a given expression is of the requested type. |var-exp->var| returns the variable from a variable expression. |lambda-exp->bound-var| returns the bound variable in a lambda-expression and |lambda-exp->body| returns the body. |app-exp->rator| returns the operator of an application expression and |app-exp->rand| the operand.
+
+\begin{lstlisting}
+(define var-exp
+  (lambda (var) var))
+
+(define lambda-exp
+  (lambda (bound-var body) (list 'lambda (list bound-var) body)))
+   
+(define app-exp
+  (lambda (rator rand) (list rator rand)))
+  
+(define var-exp?
+  (lambda (exp) (symbol? exp)))
+  
+(define lambda-exp?
+  (lambda (exp)
+    (and 
+     (list? exp) 
+     (and
+      (eq? (length exp) 3)
+      (and
+       (eqv? (car exp) 'lambda)
+       (and
+        (list? (cadr exp))
+        (and
+         (eq? (length (cadr exp)) 1)
+         (symbol? (caadr exp)))))))))
+
+(define app-exp?
+  (lambda (exp) (and (list? exp) (eq? (length exp) 2))))
+
+(define var-exp->var
+  (lambda (exp) exp))
+
+(define lambda-exp->bound-var
+  (lambda (exp) (caadr exp)))
+
+(define lambda-exp->body
+  (lambda (exp) (caddr exp)))
+
+(define app-exp->rator
+  (lambda (exp) (car exp)))
+
+(define app-exp->rand
+  (lambda (exp) (cadr exp)))
+\end{lstlisting}
+
+\subsubsection{Exercise 2.16}
+
+The follow code is an adaptation of the interface defined in exercise 2.15, where the bound variable of a $\lambda$-calculus expression is not surrounded by parantheses.
+
+\begin{lstlisting}
+(define lambda-exp
+  (lambda (bound-var body) (list 'lambda bound-var body)))
+  
+(define lambda-exp?
+  (lambda (exp)
+    (and 
+     (list? exp) 
+     (and
+      (eq? (length exp) 3)
+      (and
+       (eqv? (car exp) 'lambda)
+       (symbol? (cadr exp)))))))
+
+(define lambda-exp->bound-var
+  (lambda (exp) (cadr exp)))
+\end{lstlisting}
+
+All procedures not listed in this code have remained the same from exercise 2.15.
 
 \newpage
 
